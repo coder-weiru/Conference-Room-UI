@@ -18,11 +18,12 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      // bower:js
-      // endbower
-      'app/scripts/**/*.js',
-      'test/mock/**/*.js',
-      'test/spec/**/*.js'
+      'webapp/lib/angular/angular.js',
+      'webapp/lib/angular-route/angular-route.js',
+      'webapp/lib/angular-mocks/angular-mocks.js',
+      'webapp/scripts/services/useradmin_service.js',
+      'test/unit/jasmine_version_spec.js',
+      'test/unit/services/**/*.js'
     ],
 
     // list of files / patterns to exclude
@@ -30,7 +31,7 @@ module.exports = function(config) {
     ],
 
     // web server port
-    port: 8080,
+    port: 8989,
 
     // Start these browsers, currently available:
     // - Chrome
@@ -41,12 +42,12 @@ module.exports = function(config) {
     // - PhantomJS
     // - IE (only Windows)
     browsers: [
-      'PhantomJS'
+      'Chrome'
     ],
 
     // Which plugins to enable
     plugins: [
-      'karma-phantomjs-launcher',
+      'karma-chrome-launcher',
       'karma-jasmine'
     ],
 
