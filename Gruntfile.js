@@ -9,6 +9,8 @@
 
 module.exports = function(grunt) {
 
+	var path = require('path');
+
 	// Configurable paths for the application
 	var appConfig = {
 		app: require('./bower.json').appPath || 'webapp',
@@ -20,6 +22,54 @@ module.exports = function(grunt) {
  
 		// Project settings
 		yeoman: appConfig,
+
+ 		pkg: grunt.file.readJSON('package.json'),
+		
+		bower: {
+		    install: {
+			    options: {
+			        targetDir: './webapp/lib',
+			        layout: 'byType',
+			        install: true,
+			        verbose: false,
+			        cleanTargetDir: false,
+			        cleanBowerDir: false,
+			        bowerOptions: {}
+			    }
+		    }
+		},
+
+		concat: {
+			options: {
+				eparator: ';'
+			},
+			dist: {
+				src: ['src/js/vendor/*.js','src/js/*.js'],
+				dest: 'dist/js/<%= pkg.name %>.js'
+			}
+		},
+
+		// Empties folders to start fresh
+		clean: {
+			dist: {
+				files: [{
+				  dot: true,
+				  src: [
+					'.tmp',
+					'<%= yeoman.dist %>/{,*/}*',
+					'!<%= yeoman.dist %>/.git{,*/}*'
+				  ]
+				}]
+			},
+			server: '.tmp'
+		},
+
+		karma: {
+			unit: {
+				configFile: 'test/karma.conf.js',
+				autoWatch: true
+			}
+		},
 
 		// Watches files for changes and runs tasks based on the changed files
 		watch: {
@@ -56,74 +106,25 @@ module.exports = function(grunt) {
 			]
 		  }
 		},		
+		
 		jshint:{
 			all:['scripts.js']
 		},
-		concat: {
-			dist: {
-				src: ['scripts.js', 'scripts1.js','scripts2.js'],
-				dest: 'merged.js'
-				}
-		},
+		
 		uglify: {
 			dist: {
 				src: 'merged.js',
 				dest: 'build/merged.min.js'
 			}
 		},	
-		// Empties folders to start fresh
-		clean: {
-		  dist: {
-			files: [{
-			  dot: true,
-			  src: [
-				'.tmp',
-				'<%= yeoman.dist %>/{,*/}*',
-				'!<%= yeoman.dist %>/.git{,*/}*'
-			  ]
-			}]
-		  },
-		  server: '.tmp'
-		},
-		copy: {
-		  dist: {
-			files: [{
-			  expand: true,
-			  dot: true,
-			  cwd: '<%= yeoman.app %>',
-			  dest: '<%= yeoman.dist %>',
-			  src: [
-				'*.{ico,png,txt}',
-				'.htaccess',
-				'*.html',
-				'views/{,*/}*.html',
-				'images/{,*/}*.{webp}',
-				'styles/fonts/{,*/}*.*'
-			  ]
-			}, {
-			  expand: true,
-			  cwd: '.tmp/images',
-			  dest: '<%= yeoman.dist %>/images',
-			  src: ['generated/*']
-			}, {
-			  expand: true,
-			  cwd: 'bower_components/bootstrap/dist',
-			  src: 'fonts/*',
-			  dest: '<%= yeoman.dist %>'
-			}]
-		  },
-		  styles: {
-			expand: true,
-			cwd: '<%= yeoman.app %>/styles',
-			dest: '.tmp/styles/',
-			src: '{,*/}*.css'
-		  }
-		}	
+		
     });
 
-	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-concat');
+	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-karma');
+	grunt.loadNpmTasks('grunt-bower-task');	
 	// Default task.
-	grunt.registerTask('default', ['jshint','concat','uglify']);
+	grunt.registerTask('default', ['karma','jshint','concat','uglify']);
 };
