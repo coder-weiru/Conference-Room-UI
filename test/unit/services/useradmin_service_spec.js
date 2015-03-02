@@ -30,18 +30,18 @@ describe('service.userAdmin', function() {
             //httpBackend.when("JSONP",url).respond(mockedResponse)
         }));
 
-        it('should contain three items', function() {
+        it("Async listUsers()", function() {
+            setTimeout(function() {
+                var wsRequest = userAdminService.listUsers();
 
-            var wsRequest = userAdminService.listUsers();
+                wsRequest.then(function(data) {
+                    debugger;				
+                    result = data.data.length;
+                    console.log(result);
+                });
+                }, 9000);
+        }, 10000);
 
-            wsRequest.then(function(data) {
-				debugger;				
-                result = data.data.length;
-				
-            });
-			
-			console.log(result);
-        });
     });
 
 });
