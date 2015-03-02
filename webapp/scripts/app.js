@@ -1,33 +1,62 @@
 'use strict';
 
-/**
- * @ngdoc overview
- * @name mainApp
- * @description
- * # mainApp
- *
- * Main module of the application.
- */
-angular
-  .module('mainApp', [
-    'ngAnimate',
-    'ngCookies',
-    'ngResource',
-    'ngRoute',
-    'ngSanitize',
-    'ngTouch'
-  ])
-  .config(function ($routeProvider) {
-    $routeProvider
-      .when('/', {
-        templateUrl: 'views/main.html',
+var appModule = angular.module('MainApp', ['UserAdminModule', 'ngRoute']);
+
+appModule.run(function($rootScope, $http, $window, $q, $location) {
+
+    document.addEventListener("deviceready", function () {
+        FastClick.attach(document.body);
+        StatusBar.overlaysWebView(false);
+    }, false);
+
+});
+
+appModule.controller('MainCtrl', function($scope, $routeParams) {
+    
+    $scope.dashboardUrl = 'views/user_admin.html';
+	$scope.showMenu = true;
+
+    var init = function () {
+    
+        if ($routeParams.routeId) {
+            if ($routeParams.routeId==1) {
+                $scope.setDashboardUrl('user_admin');
+            }
+            else if ($routeParams.routeId==2) {
+                $scope.setDashboardUrl('user_admin');
+            }
+            else if ($routeParams.routeId==3) {
+                $scope.setDashboardUrl('user_admin');
+            }
+        }
+    };
+
+    // fire on controller loaded
+    init();
+
+    $scope.setDashboardUrl = function(dashboard) {
+        $scope.dashboardUrl = 'views/' + dashboard + '.html';
+    };
+
+    $scope.getDashboardUrl = function() {
+        return $scope.dashboardUrl;
+    };
+
+    $scope.toggleMenu = function () {
+        $scope.showMenu = !$scope.showMenu;
+    }
+
+    $scope.setDashboardUrl('user_admin');
+});
+
+appModule.config(['$routeProvider',
+  function($routeProvider) {
+    $routeProvider.
+      when('/dashboard/:routeId', {
+        templateUrl: 'cpu_dashboard.html',
         controller: 'MainCtrl'
-      })
-      .when('/about', {
-        templateUrl: 'views/about.html',
-        controller: 'AboutCtrl'
-      })
-      .otherwise({
-        redirectTo: '/'
+      }).
+      otherwise({
+        redirectTo: '/dashboard/1'
       });
-  });
+}]);
