@@ -16,56 +16,60 @@
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
         
-    <div id="left-nav">
-        <div class="welcome">Welcome John Smith</div>
-        <div class="title">Conference Room</div>
-        <ul class="list">
-            <li class="list-item">
-                <a class="item-content" href="#dashboard/1">
-                    <i class="ion-android-calendar"></i>
-                    <h3>Book a Room</h3>
-                </a>
-            </li>
-            <li class="list-item">
-                <a class="item-content" href="#dashboard/2">
-                    <i class="ion-android-location"></i>
-                    <h3>Manage Rooms</h3>
-                </a>
-            </li>
-            <li class="list-item">
-                <a class="item-content" href="#dashboard/3">
-                    <i class="ion-person-add"></i>
-                    <h3>Manage Users</h3>
-                </a>
-            </li>
-        </ul>
-    </div>
+        <div id="left-nav">
+            <div class="welcome">Welcome John Smith</div>
+            <div class="title">Conference Room</div>
+            <ul class="list">
+                <li class="list-item">
+                    <a class="item-content" href="#dashboard/1">
+                        <i class="ion-android-calendar"></i>
+                        <h3>Book Room</h3>
+                        <p>Make a conference room reservation</p>
+                    </a>
+                </li>
+                <li class="list-item">
+                    <a class="item-content" href="#dashboard/2">
+                        <i class="ion-ios-location"></i>
+                        <h3>Manage Rooms</h3>
+                        <p>Add or remove rooms</p>
+                    </a>
+                </li>
+                <li class="list-item">
+                    <a class="item-content" href="#dashboard/3">
+                        <i class="ion-person-add"></i>
+                        <h3>Manage Users</h3>
+                        <p>Add or remove users</p>
+                    </a>
+                </li>
+            </ul>
+        </div>
 
-    <div id="container" ng-class="{'transition offset':(!showMenu), 'transition':(showMenu)}" 
-        ng-app="MainApp" ng-controller="MainCtrl">
-        <header class="bar bar-header nav-bar bar-stable">
-            <button id="btn-menu" class="button button-icon" ng-click="toggleMenu()" style="font-size: 22px;">
-                <i class="ion-navicon-round"></i>
-            </button>
-            <h1 class="title">Conference Room App</h1>
-        </header>
+        <div id="container" ng-class="{'transition offset':(!showMenu), 'transition':(showMenu)}" 
+            ng-app="MainApp" ng-controller="MainCtrl">
+            <header class="bar bar-header nav-bar bar-stable">
+                <button id="btn-menu" class="button button-icon" ng-click="toggleMenu()" style="font-size: 22px;">
+                    <i class="ion-navicon-round"></i>
+                </button>
+                <h1 class="title">Conference Room App</h1>
+            </header>
 
-        <div id="content" class="slide-animate" ng-include src="getDashboardUrl()"></div>
+            <div id="content" class="slide-animate" ng-include src="getDashboardUrl()"></div>
 
-    </div>
-        
-    <script src="lib/jquery/dist/jquery.js"></script>
-    <script src="lib/bootstrap/dist/js/bootstrap.js"></script>
-    <script src="lib/fastclick/lib/fastclick.js"></script>
-    <script src="lib/spin/javascripts/jquery.spin.js"></script>
-    <script src="lib/angular/angular.js"></script>
-    <script src="lib/angular-route/angular-route.js"></script>
-    <script src="lib/angular-ui-grid/ui-grid.js"></script>
-    <script src="scripts/app.js"></script>
-    <script src="scripts/services/useradmin_service.js"></script>
-    <script src="scripts/services/roomadmin_service.js"></script>
-    <script src="scripts/services/reservation_service.js"></script>
-    <script src="scripts/controllers/useradmin_controller.js"></script>
+        </div>
+
+        <script src="lib/jquery/dist/jquery.js"></script>
+        <script src="lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="lib/fastclick/lib/fastclick.js"></script>
+        <script src="lib/spin/javascripts/jquery.spin.js"></script>
+        <script src="lib/angular/angular.js"></script>
+        <script src="lib/angular-route/angular-route.js"></script>
+        <script src="lib/angular-ui-grid/ui-grid.js"></script>
+        <script src="scripts/app.js"></script>
+        <script src="scripts/services/useradmin_service.js"></script>
+        <script src="scripts/services/roomadmin_service.js"></script>
+        <script src="scripts/services/reservation_service.js"></script>
+        <script src="scripts/controllers/useradmin_controller.js"></script>
 
     </body>
+    
 </html>

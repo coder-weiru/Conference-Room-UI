@@ -53,7 +53,7 @@ appModule.config(['$routeProvider',
   function($routeProvider) {
     $routeProvider.
       when('/dashboard/:routeId', {
-        templateUrl: 'cpu_dashboard.html',
+        templateUrl: 'views/user_admin.html',
         controller: 'MainCtrl'
       }).
       otherwise({
