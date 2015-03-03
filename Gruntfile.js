@@ -25,18 +25,22 @@ module.exports = function(grunt) {
 
  		pkg: grunt.file.readJSON('package.json'),
 		
-		bower: {
-		    install: {
-			    options: {
-			        targetDir: './webapp/lib',
-			        layout: 'byType',
-			        install: true,
-			        verbose: false,
-			        cleanTargetDir: false,
-			        cleanBowerDir: false,
-			        bowerOptions: {}
-			    }
-		    }
+        bower: {
+		    dev: {
+                dest: './webapp/lib',
+                css_dest: './webapp/lib',
+                options: {
+                    expand: true,
+                    packageSpecific: {
+                        bootstrap: {
+                          files: [
+                            "dist/fonts/glyphicons-halflings-regular.*",
+                            "dist/css/*.*"  
+                          ]
+                        }
+                    }
+                }
+            }
 		},
 
 		concat: {
@@ -124,7 +128,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-karma');
-	grunt.loadNpmTasks('grunt-bower-task');	
+	grunt.loadNpmTasks('grunt-bower');	
 	// Default task.
 	grunt.registerTask('default', ['karma','jshint','concat','uglify']);
 };

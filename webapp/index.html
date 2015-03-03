@@ -4,8 +4,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
         <title>Conference Room</title>
-        <link href="lib/bootstrap/bootstrap.css" rel="stylesheet"/>
-        <link href="lib/ionicons/ionicons.css" rel="stylesheet">
+        <link href="lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet"/>
+        <link href="lib/ionicons/css/ionicons.css" rel="stylesheet">
         <link href="lib/angular-ui-grid/ui-grid.css" rel="stylesheet">
         <link href="styles/main.css" rel="stylesheet">
     </head>
@@ -17,28 +17,25 @@
     <![endif]-->
         
     <div id="left-nav">
-        <div class="welcome">Welcome to Conference Room</div>
-        <div class="title">Menu</div>
+        <div class="welcome">Welcome John Smith</div>
+        <div class="title">Conference Room</div>
         <ul class="list">
             <li class="list-item">
                 <a class="item-content" href="#dashboard/1">
-                    <i class="ion-stats-bars"></i>
-                    <h3>Book Conference Rooms</h3>
-                    <p>Select a date to book a conference room</p>
+                    <i class="ion-android-calendar"></i>
+                    <h3>Book a Room</h3>
                 </a>
             </li>
             <li class="list-item">
                 <a class="item-content" href="#dashboard/2">
-                    <i class="ion-pie-graph"></i>
-                    <h3>Manage Conference Rooms</h3>
-                    <p>Add or remove conference rooms</p>
+                    <i class="ion-android-location"></i>
+                    <h3>Manage Rooms</h3>
                 </a>
             </li>
             <li class="list-item">
                 <a class="item-content" href="#dashboard/3">
-                    <i class="ion-connection-bars"></i>
+                    <i class="ion-person-add"></i>
                     <h3>Manage Users</h3>
-                    <p>Add or remove users</p>
                 </a>
             </li>
         </ul>
@@ -56,21 +53,14 @@
         <div id="content" class="slide-animate" ng-include src="getDashboardUrl()"></div>
 
     </div>
-
-    <div class="footer">
-      <div class="container">
-        <p><span class="glyphicon glyphicon-heart"></span> Conference Room, Inc. </p>
-      </div>
-    </div>
         
-    <script src="lib/jquery/jquery.js"></script>
-    <script src="lib/bootstrap/bootstrap.js"></script>
-    <script src="lib/fastclick/fastclick.js"></script>
-    <script src="lib/spiner/spin.js"></script>
+    <script src="lib/jquery/dist/jquery.js"></script>
+    <script src="lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="lib/fastclick/lib/fastclick.js"></script>
+    <script src="lib/spin/javascripts/jquery.spin.js"></script>
     <script src="lib/angular/angular.js"></script>
     <script src="lib/angular-route/angular-route.js"></script>
     <script src="lib/angular-ui-grid/ui-grid.js"></script>
-    <script src="resources/js/vendor/spin.js"></script>
     <script src="scripts/app.js"></script>
     <script src="scripts/services/useradmin_service.js"></script>
     <script src="scripts/services/roomadmin_service.js"></script>

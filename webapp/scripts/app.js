@@ -1,6 +1,6 @@
 'use strict';
 
-var appModule = angular.module('MainApp', ['UserAdminModule', 'ngRoute']);
+var appModule = angular.module('MainApp', ['controller.userAdmin', 'ngRoute']);
 
 appModule.run(function($rootScope, $http, $window, $q, $location) {
 
