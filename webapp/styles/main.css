@@ -81,6 +81,14 @@
     background-color: #fff;
 }
 
+#canvas.center {
+    margin-top: 20px;
+    margin-left: 50px;
+    margin-right: 50px;
+    width: 85%;
+    background-color: #fff;
+}
+
 .margin-top2  { margin-top: 2px; }
 .margin-top5 { margin-top: 5px; }
 .margin-top10 { margin-top: 10px; }
@@ -91,3 +99,10 @@
 .margin-top80 { margin-top: 80px; }
 .margin-top100 { margin-top: 100px; }
 .margin-top150 { margin-top: 150px; }
+
+// Angular
+.ngCellText {
+  display:table-cell;
+  vertical-align:middle;
+  white-space:normal;
+}
