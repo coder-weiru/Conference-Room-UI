@@ -1,9 +1,9 @@
 /**
  * UserAdminController
  */
-var userModule = angular.module('controller.userAdmin', [ 'service.userAdmin', 'ui.grid' ]);
+var userModule = angular.module('controller.userAdmin', [ 'service.userAdmin',  'service.userPhoto', 'ui.grid' ]);
 
-userModule.controller('UserListCtrl', function($scope, UserAdminService) {
+userModule.controller('UserListCtrl', function($scope, UserAdminService, UserPhotoModalService) {
     
     $scope.photo = function(val) {
         var photoUrl = "images/headshot-empty.jpg";
@@ -50,8 +50,17 @@ userModule.controller('UserListCtrl', function($scope, UserAdminService) {
 		});
 	};
 	
-    $scope.openPhotoUploadModalDialog = function(user) {debugger;
-		console.log(user);
+    var modalOptions = {
+        closeButtonText: 'Cancel',
+        actionButtonText: 'Upload picture file...',
+        headerText: 'Upload Headshot Photo',
+        bodyText: 'Please select a headshot picture file to upload.'
+    };
+
+    $scope.openPhotoUploadModalDialog = function(user) {
+		UserPhotoModalService.showModal({}, modalOptions).then(function (result) {
+            console.log(result);
+        });
 	};
     
 	$scope.listUsers();
