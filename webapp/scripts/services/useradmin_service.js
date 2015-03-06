@@ -34,7 +34,7 @@ angular.module('service.userAdmin', [])
 	service.updateUser = function(user) {
 		var userAdminServiceUrl = SERVICE_CONFIG.URL + "/service/user/update";
 		var postConfig = {};
-		return $http.post(userAdminServiceUrl, data, postConfig).then(function(response) {
+		return $http.post(userAdminServiceUrl, user, postConfig).then(function(response) {
 			return response;
 		});
 	};
