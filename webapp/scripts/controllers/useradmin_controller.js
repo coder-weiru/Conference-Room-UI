@@ -4,8 +4,17 @@
 var userModule = angular.module('controller.userAdmin', [ 'service.userAdmin', 'ui.grid' ]);
 
 userModule.controller('UserListCtrl', function($scope, UserAdminService) {
-	$scope.columns = [{ name: ' ',
-                        cellTemplate: '<img ng-src="images/headshot-empty.jpg"/>',
+    
+    $scope.photo = function(val) {
+        var photoUrl = "images/headshot-empty.jpg";
+        if (val != null && (val.search("http") >=0 || val.search("https") >=0)) {
+            photoUrl = val;  
+        }
+        return photoUrl;
+    };
+
+    $scope.columns = [{ name: ' ',
+                        cellTemplate: '<img ng-src="{{grid.appScope.photo(row.entity.photoUrl)}}" alt="{{row.entity.name}}" class="gallery-image fade-animation" ng-click="grid.appScope.openPhotoUploadModalDialog(row.entity)" />',
                         cellClass: 'ngCellText',
                         width: 100,
                         enableHiding: false,
@@ -41,6 +50,9 @@ userModule.controller('UserListCtrl', function($scope, UserAdminService) {
 		});
 	};
 	
+    $scope.openPhotoUploadModalDialog = function(user) {debugger;
+		console.log(user);
+	};
     
 	$scope.listUsers();
 	
