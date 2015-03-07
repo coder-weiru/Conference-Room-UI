@@ -6,7 +6,7 @@ var userModule = angular.module('controller.userAdmin', [ 'service.userAdmin',  
 userModule.controller('UserListCtrl', function($scope, $log, UserAdminService, UserPhotoModalService, MessageBoxService) {
     
     $scope.photo = function(val) {
-        var photoUrl = "images/headshot-empty.jpg";
+        var photoUrl = "images/man-topgun-head.svg";
         if (val != null && (val.search("http") >=0 || val.search("https") >=0)) {
             photoUrl = val;  
         }
@@ -44,7 +44,12 @@ userModule.controller('UserListCtrl', function($scope, $log, UserAdminService, U
         columnDefs: $scope.columns,
         onRegisterApi: function(gridApi) {
           $scope.gridApi = gridApi;
-          gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
+          $scope.gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
+          $scope.gridApi.core.addRowHeaderColumn( { 
+              name: 'rowHeaderCol', 
+              displayName: '', 
+              width: 30, 
+              cellTemplate: '<div></div>'} );
         }
     };
  
