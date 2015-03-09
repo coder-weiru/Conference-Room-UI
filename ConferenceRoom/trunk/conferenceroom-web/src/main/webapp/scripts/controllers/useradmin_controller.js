@@ -13,9 +13,9 @@ userModule.controller('UserListCtrl', function($scope, $log, UserAdminService, U
         return photoUrl;
     };
     
-    $scope.columns = [{ name: ' ',
-                        cellTemplate: '<img ng-src="{{grid.appScope.getPhotoUrl(row.entity)}}" alt="{{row.entity.name}}" class="gallery-image fade-animation" ng-click="grid.appScope.openPhotoUploadModalDialog(row.entity)" />',
-                        cellClass: 'ngCellText',
+    $scope.columns = [{ name: 'photo',
+                        displayName: '',
+                        cellTemplate: '<img ng-src="{{grid.appScope.getPhotoUrl(row.entity)}}" alt="{{row.entity.name}}" class="gallery-image fade-animation"/>',
                         width: 100,
                         enableHiding: false,
                         enableSorting: false,
@@ -23,16 +23,22 @@ userModule.controller('UserListCtrl', function($scope, $log, UserAdminService, U
                         enableCellEdit: false
                       }, 
                       { field: 'name',
-                        cellClass: 'ngCellText',
                         enableCellEdit: true
                       }, 
                       { field: 'email', 
-                        cellClass: 'ngCellText',
                         enableCellEdit: true
                       }, 
                       { field: 'group',
-                        cellClass: 'ngCellText',
                         enableCellEdit: true
+                      },
+                      { name: 'actionMenu',
+                        displayName: '',
+                        cellTemplate: 'views/user_admin_rowheadermenu.html',
+                        width: 210,
+                        enableHiding: false,
+                        enableSorting: false,
+                        enableColumnMenu: false,
+                        enableCellEdit: false
                       }];
     
     $scope.gridOptions = {
@@ -49,7 +55,8 @@ userModule.controller('UserListCtrl', function($scope, $log, UserAdminService, U
               name: 'rowHeaderCol', 
               displayName: '', 
               width: 30, 
-              cellTemplate: '<div></div>'} );
+              cellTemplate: ''
+          } );
         }
     };
  
@@ -118,4 +125,26 @@ userModule.controller('UserListCtrl', function($scope, $log, UserAdminService, U
 	
 	$scope.listUsers();
 	
+});
+
+userModule.controller('RowHeaderMenuCtrl', function ($scope, $log) {
+  $scope.items = [
+    'The first choice!',
+    'And another choice for you.',
+    'but wait! A third!'
+  ];
+
+  $scope.status = {
+    isopen: false
+  };
+
+  $scope.toggled = function(open) {
+    $log.log('Dropdown is now: ', open);
+  };
+
+  $scope.toggleDropdown = function($event) {
+    $event.preventDefault();
+    $event.stopPropagation();
+    $scope.status.isopen = !$scope.status.isopen;
+  };
 });

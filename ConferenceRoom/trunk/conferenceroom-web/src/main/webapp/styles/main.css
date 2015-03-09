@@ -101,12 +101,6 @@
 .margin-top150 { margin-top: 150px; }
 
 // Angular
-.ngCellText {
-  display:table-cell;
-  vertical-align:middle;
-  white-space:normal;
-}
-
 [ng-click],
 [data-ng-click],
 [x-ng-click] {
@@ -115,7 +109,7 @@
 
 .grid {
   width: 800px;
-  height: 300px;
+  height: 450px;
 }
 
 .ui-grid-cell img {
