@@ -3,6 +3,13 @@
         <h3>User Management</h3>    
     </div>   
     <div ng-controller="UserListCtrl">
-        <div id="userlist" ui-grid="gridOptions" class="grid" ui-grid-edit ui-grid-row-edit ui-grid-cellNav></div>
+    	<div class="container-fluid margin-top15" ng-controller="MenuCtrl">
+		    <ul class="nav nav-pills">
+		    	<li><button class="btn btn-primary btn-large" ng-show="canAddNewUser()"><i class="icon-white icon-user"></i>Add New User</button></li>
+		        <li><button class="btn btn-primary btn-large" ng-show="canUploadPhoto()" ng-click="openPhotoUploadModalDialog(selectedUser)"><i class="icon-white icon-camera"></i>Upload User Photo</button></li>
+		        <li><button class="btn btn-primary btn-large" ng-show="canDeleteUser()"><i class="icon-white icon-user"></i>Delete User</button></li>
+		    </ul>
+		</div>
+        <div id="userlist" ui-grid="gridOptions" class="grid margin-top15" ui-grid-selection ui-grid-edit ui-grid-row-edit ui-grid-cellNav></div>
     </div>
 </div>
