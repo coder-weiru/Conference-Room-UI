@@ -1,7 +1,7 @@
 /**
  * UserAdminController
  */
-var userModule = angular.module('controller.userAdmin', [ 'service.userAdmin',  'service.userPhoto', 'service.messageBox', 'ui.grid', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav']);
+var userModule = angular.module('controller.userAdmin', [ 'service.userAdmin',  'service.userPhoto', 'service.messageBox', 'ui.grid', 'ui.grid.selection', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav']);
 
 userModule.controller('UserListCtrl', function($scope, $log, UserAdminService, UserPhotoModalService, MessageBoxService) {
     
@@ -30,33 +30,31 @@ userModule.controller('UserListCtrl', function($scope, $log, UserAdminService, U
                       }, 
                       { field: 'group',
                         enableCellEdit: true
-                      },
-                      { name: 'actionMenu',
-                        displayName: '',
-                        cellTemplate: 'views/user_admin_rowheadermenu.html',
-                        width: 210,
-                        enableHiding: false,
-                        enableSorting: false,
-                        enableColumnMenu: false,
-                        enableCellEdit: false
                       }];
     
     $scope.gridOptions = {
         rowHeight:70,
         enableRowSelection: true, 
-        enableRowHeaderSelection: false,
+        enableRowHeaderSelection: true,
+        selectionRowHeaderWidth: 35,
+        enableSelectAll: true,
+        multiSelect: false,
+        noUnselect: false,
+        showGridFooter: true,
         enableSorting: true,
         enableCellEditOnFocus: true,
         columnDefs: $scope.columns,
         onRegisterApi: function(gridApi) {
           $scope.gridApi = gridApi;
-          $scope.gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
-          $scope.gridApi.core.addRowHeaderColumn( { 
-              name: 'rowHeaderCol', 
-              displayName: '', 
-              width: 30, 
-              cellTemplate: ''
-          } );
+          $scope.gridApi.rowEdit.on.saveRow($scope, $scope.saveRow); 
+          $scope.gridApi.selection.on.rowSelectionChanged($scope, function(row) { 
+            if (row.isSelected) {
+              $scope.selectedUser = row.entity;  
+            } else {
+              $scope.selectedUser = null;
+            }
+            $log.log($scope.selectedUser);
+          });
         }
     };
  
@@ -71,7 +69,7 @@ userModule.controller('UserListCtrl', function($scope, $log, UserAdminService, U
 		UserPhotoModalService.showModal({}, fileUploadModalOptions).then(function (result) {
             console.log(result);
         });
-	};
+	  };
     
     $scope.saveRow = function( rowEntity ) {
         var promise = UserAdminService.updateUser( rowEntity );
@@ -114,8 +112,9 @@ userModule.controller('UserListCtrl', function($scope, $log, UserAdminService, U
         });
 	}; 
     
-    $scope.users = [];
-    
+  $scope.users = [];
+  $scope.selectedUser;
+
 	$scope.listUsers = function() {
 		UserAdminService.listUsers().then(function(users) {
 			$scope.users = users;
@@ -127,24 +126,17 @@ userModule.controller('UserListCtrl', function($scope, $log, UserAdminService, U
 	
 });
 
-userModule.controller('RowHeaderMenuCtrl', function ($scope, $log) {
-  $scope.items = [
-    'The first choice!',
-    'And another choice for you.',
-    'but wait! A third!'
-  ];
-
-  $scope.status = {
-    isopen: false
+userModule.controller('MenuCtrl', function ($scope, $log) {
+  $scope.canAddNewUser = function() {
+    //return $scope.selectedUser!=null;
+    return true;
   };
 
-  $scope.toggled = function(open) {
-    $log.log('Dropdown is now: ', open);
+  $scope.canUploadPhoto = function() {
+    return $scope.selectedUser!=null;
   };
 
-  $scope.toggleDropdown = function($event) {
-    $event.preventDefault();
-    $event.stopPropagation();
-    $scope.status.isopen = !$scope.status.isopen;
+  $scope.canDeleteUser = function() {
+    return $scope.selectedUser!=null;
   };
 });
