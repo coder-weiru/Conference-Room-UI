@@ -117,3 +117,8 @@
   width: 800px;
   height: 300px;
 }
+
+.ui-grid-cell img {
+    width: 100%;
+    height: auto;
+}
