@@ -66,7 +66,7 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, UserAdmin
     };
 
     $scope.openPhotoUploadModalDialog = function( rowEntity ) {
-		UserPhotoModalService.showModal({}, fileUploadModalOptions).then(function (result) {
+		    UserPhotoModalService.showModal({}, fileUploadModalOptions).then(function (result) {
             console.log(result);
         });
 	  };
@@ -120,10 +120,13 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, UserAdmin
 		});
 	};
 	
-    $scope.addUser = function( user ) {
-		$scope.gridOptions.data.unshift( user );
-        $scope.gridApi.rowEdit.flushDirtyRows( $scope.gridApi.grid );
-        $scope.gridApi.selection.selectRow($scope.gridOptions.data[0]);
+    $scope.addUser = function( user ) { 
+		    $scope.gridOptions.data.unshift( user );
+        $timeout(function () {
+            $scope.gridApi.selection.selectRow($scope.gridOptions.data[0]);
+          },
+        10)
+        
 	};
 	
     $scope.selectedUser;
