@@ -5,7 +5,7 @@
     <div ng-controller="UserListCtrl">
     	<div class="container-fluid margin-top15" ng-controller="MenuCtrl">
 		    <ul class="nav nav-pills">
-		    	<li><button class="btn btn-primary btn-large" ng-show="canAddNewUser()"><i class="icon-white icon-user"></i>Add New User</button></li>
+		    	<li><button class="btn btn-primary btn-large" ng-show="canAddNewUser()" ng-click="addNewUser()"><i class="icon-white icon-user"></i>Add New User</button></li>
 		        <li><button class="btn btn-primary btn-large" ng-show="canUploadPhoto()" ng-click="openPhotoUploadModalDialog(selectedUser)"><i class="icon-white icon-camera"></i>Upload User Photo</button></li>
 		        <li><button class="btn btn-primary btn-large" ng-show="canDeleteUser()"><i class="icon-white icon-user"></i>Delete User</button></li>
 		    </ul>
