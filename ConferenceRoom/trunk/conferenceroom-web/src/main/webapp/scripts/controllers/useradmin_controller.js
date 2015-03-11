@@ -3,7 +3,7 @@
  */
 var userModule = angular.module('controller.userAdmin', [ 'service.userAdmin',  'service.userPhoto', 'service.messageBox', 'ui.grid', 'ui.grid.selection', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav', 'ui.bootstrap']);
 
-userModule.controller('UserListCtrl', function($scope, $log, $timeout, $modal, UserAdminService, UserPhotoModalService, MessageBoxService) {
+userModule.controller('UserListCtrl', function($scope, $log, $timeout, $modal, UserAdminService) {
     
     $scope.getPhotoUrl = function( rowEntity ) {
         var photoUrl = rowEntity.photoUrl;
@@ -66,11 +66,17 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, $modal, U
 		});
 	};
 	
+    $scope.findUser = function( text ) { 
+        UserAdminService.findUser( text ).then(function( users ) {
+            $scope.gridOptions.data = users;
+        });
+    }; 
+    
     $scope.saveUser = function( user ) { 
         if (user!=null && user.id==null) {
 			promise = UserAdminService.addUser( user );
 		} else {
-			promise = UserAdminService.updateUser( user );
+			promise = UserAdmnService.updateUser( user );
 		}
         $scope.gridApi.rowEdit.setSavePromise( user, promise );
         
@@ -220,6 +226,19 @@ userModule.controller('MenuCtrl', function ($scope, $log, $modal) {
         }
 	};
     
+    $scope.filterUser = function( searchText ) { 
+        if (searchText!=null && searchText.trim()!='') {
+			var filtered = $scope.gridOptions.data.filter(function( user ){
+                return !user.name.indexOf(searchText);
+            });
+            return filtered.map(function( user ){
+                return user;
+            });
+		} else {
+            $scope.listUsers();
+        }
+    };
+    
     $scope.deleteUser = function() {
 		var modalInstance = $modal.open({
           templateUrl: 'userDeleteConfirmation.html',
@@ -263,6 +282,11 @@ userModule.controller('MenuCtrl', function ($scope, $log, $modal) {
               $log.info('Modal dismissed at: ' + new Date());
             });
 	};
+    
+    $scope.onUserSelect = function($item, $model, $label) { 
+        $scope.findUser( $label );
+    };
+    
 });
 
 userModule.controller('UserPhotoUploadCtrl', function ($scope, $modalInstance, userSelected) {
