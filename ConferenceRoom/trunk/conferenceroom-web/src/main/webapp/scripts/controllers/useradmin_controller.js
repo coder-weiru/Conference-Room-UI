@@ -59,21 +59,6 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, $modal, U
           });
         }
     };
- 
-    
-    var messageBoxModalOptions = {
-            actionButtonText: '  Got It ',
-            headerText: '',
-            bodyText: ''
-    };
-    
-    $scope.openErrorMessageModalDialog = function( header, message ) {
-        messageBoxModalOptions.headerText = header;
-        messageBoxModalOptions.bodyText = message;                                                              
-        MessageBoxService.showModal({}, messageBoxModalOptions).then(function (result) {
-            console.log(result);
-        });
-	}; 
     
     $scope.listUsers = function() {
 		UserAdminService.listUsers().then(function(users) {
@@ -257,22 +242,34 @@ userModule.controller('MenuCtrl', function ($scope, $log, $modal) {
             });
 	};
     
-    var fileUploadModalOptions = {
-        closeButtonText: 'Cancel',
-        actionButtonText: 'Upload picture file...',
-        headerText: 'Upload Headshot Photo',
-        bodyText: 'Please select a headshot picture file to upload.'
-    };
-
-    $scope.openPhotoUploadModalDialog = function( rowEntity ) {
-            UserPhotoModalService.showModal({}, fileUploadModalOptions).then(function (result) {
-            console.log(result);
-        });
-    };
-    
     $scope.uploadPhoto = function() {
-        openPhotoUploadModalDialog($scope.selectedUser);
+        var modalInstance = $modal.open({
+          templateUrl: 'userPhotoUpload.html',
+          controller: 'UserPhotoUploadCtrl',
+          size: 'lg',
+          resolve: {
+            userSelected: function () {
+                return $scope.selectedUser;
+            }
+          }
+        });
+
+        modalInstance.result.then(function (message) {
+              if (message=='ok') {
+                
+              }
+            }, 
+            function () {
+              $log.info('Modal dismissed at: ' + new Date());
+            });
 	};
+});
+
+userModule.controller('UserPhotoUploadCtrl', function ($scope, $modalInstance, userSelected) {
+    $scope.userSelected = userSelected;
+    $scope.ok = function () {
+        $modalInstance.close('ok');
+    };
 });
 
 userModule.controller('UserDeleteConfirmationCtrl', function ($scope, $modalInstance, userToDelete) {
