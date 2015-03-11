@@ -126,7 +126,7 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, UserAdmin
     $scope.getUser = function( user ) { 
         if (user!=null && user.id!=null) {
 			UserAdminService.getUser(user.id).then(function( data ) {
-                $scope.revertUser = data;  
+                $scope.originalUser = data;  
             });
 		} 
     }; 
@@ -147,14 +147,15 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, UserAdmin
     $scope.$on('userSaved', function(event, user) {  
         $scope.gridOptions.data[0] = user;   
         $scope.selectUser( $scope.gridOptions.data[0] ); 
-        $scope.revertUser = null;
+        $scope.originalUser = null;
     });
      
     $scope.$on('userSaveErr', function(event, user) {  
+        $scope.selectUser( user ); 
         $scope.getUser( user );
     });
     
-    $scope.revertUser;
+    $scope.originalUser;
     $scope.selectedUser;
     $scope.listUsers();
 	
@@ -173,8 +174,8 @@ userModule.controller('MenuCtrl', function ($scope, $log) {
         return $scope.selectedUser!=null && $scope.selectedUser.id!=null;
     };
     
-    $scope.canRevertUser = function() {
-        return $scope.revertUser!=null;
+    $scope.canRevertUser = function() { 
+        return $scope.originalUser!=null && $scope.selectedUser!=null && $scope.originalUser.id == $scope.selectedUser.id;
     };
     
     $scope.addNewUser = function() {
@@ -185,5 +186,16 @@ userModule.controller('MenuCtrl', function ($scope, $log) {
         user.photoUrl = ' ';
                                     
 		$scope.addUser(user);
+	};
+    
+    $scope.revertUser = function() { debugger;
+        for (var i = 0; i < $scope.gridOptions.data.length; i++) { 
+            if ($scope.gridOptions.data[i].id == $scope.originalUser.id) { 
+                $scope.gridOptions.data[i] = $scope.originalUser; 
+                $scope.selectUser( $scope.gridOptions.data[i] ); 
+                $scope.originalUser = null;
+                break;
+            }
+        }
 	};
 });
