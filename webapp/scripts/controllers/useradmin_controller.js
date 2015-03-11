@@ -3,7 +3,7 @@
  */
 var userModule = angular.module('controller.userAdmin', [ 'service.userAdmin',  'service.userPhoto', 'service.messageBox', 'ui.grid', 'ui.grid.selection', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav', 'ui.bootstrap']);
 
-userModule.controller('UserListCtrl', function($scope, $log, $timeout, UserAdminService, UserPhotoModalService, MessageBoxService) {
+userModule.controller('UserListCtrl', function($scope, $log, $timeout, $modal, UserAdminService, UserPhotoModalService, MessageBoxService) {
     
     $scope.getPhotoUrl = function( rowEntity ) {
         var photoUrl = rowEntity.photoUrl;
@@ -95,24 +95,46 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, UserAdmin
 			    $scope.errorMessage = 'User information is saved successfully!';
                 $scope.$broadcast('userSaved', data);
 		    } else {
-		    	$scope.errorMessage = 'Oops, we received your request, but there was an error processing it.';
-                $scope.openErrorMessageModalDialog('Error while updating user', $scope.errorMessage);
+		    	$scope.showMessage('Oops, we received your request, but there was an error processing it.');
                 $scope.$broadcast('userSaveErr', user);
 		    }
 		}, function(response) { 
             var data = response.data;                   
 			if (data.httpStatus == 'BAD_REQUEST' || data.httpStatus == 'INTERNAL_SERVER_ERROR') {
-			    $scope.errorMessage = response.data.message;
-                $scope.openErrorMessageModalDialog('Error while updating user', $scope.errorMessage);
+			    $scope.showMessage(response.data.message);
 		    } else {
-		    	$scope.errorMessage = 'There was a network error. Try again later.';
-                $scope.openErrorMessageModalDialog('Error while updating user', $scope.errorMessage);
+		    	$scope.showMessage('There was a network error. Try again later.');
 		    }
             $scope.$broadcast('userSaveErr', user);
 		});
         
     }; 
  
+    $scope.showMessage = function( errorMessage ) {
+       var modalInstance = $modal.open({
+          templateUrl: 'userSaveErrorMessage.html',
+          controller: 'UserSaveErrorMessageCtrl',
+          size: 'sm',
+          resolve: {
+            userToSave: function () {
+                return $scope.selectedUser;
+            },
+            errorMessage: function () {
+                return errorMessage;
+            }
+          }
+        });
+
+        modalInstance.result.then(function (message) {
+              if (message=='ok') {
+                $scope.removeUser( $scope.selectedUser );
+              }
+            }, 
+            function () {
+              $log.info('Modal dismissed at: ' + new Date());
+            });
+    };
+    
     $scope.getUser = function( user ) { 
         if (user!=null && user.id!=null) {
 			UserAdminService.getUser(user.id).then(function( data ) {
@@ -134,7 +156,7 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, UserAdmin
     };
     
     $scope.unSelectUser = function( user ) {  
-        $timeout(function () {debugger;
+        $timeout(function () {
             $scope.gridApi.selection.toggleRowSelection( user );
           },
         10);
@@ -213,20 +235,6 @@ userModule.controller('MenuCtrl', function ($scope, $log, $modal) {
         }
 	};
     
-    var messageBoxModalOptions = {
-            actionButtonText: '  Got It ',
-            headerText: '',
-            bodyText: ''
-    };
-    
-    $scope.openDeleteUserConfirmationModalDialog = function( header, message ) {
-        messageBoxModalOptions.headerText = header;
-        messageBoxModalOptions.bodyText = message;                                                              
-        MessageBoxService.showModal({}, messageBoxModalOptions).then(function (result) {
-            console.log(result);
-        });
-	}; 
-    
     $scope.deleteUser = function() {
 		var modalInstance = $modal.open({
           templateUrl: 'userDeleteConfirmation.html',
@@ -276,5 +284,13 @@ userModule.controller('UserDeleteConfirmationCtrl', function ($scope, $modalInst
 
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
+    };
+});
+    
+userModule.controller('UserSaveErrorMessageCtrl', function ($scope, $modalInstance, userToSave, errorMessage) {
+    $scope.userToSave = userToSave;
+    $scope.errorMessage = errorMessage;
+    $scope.ok = function () {
+        $modalInstance.close('ok');
     };
 });
