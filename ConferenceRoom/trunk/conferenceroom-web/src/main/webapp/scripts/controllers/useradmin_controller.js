@@ -69,38 +69,8 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, UserAdmin
 		    UserPhotoModalService.showModal({}, fileUploadModalOptions).then(function (result) {
             console.log(result);
         });
-	  };
+    };
     
-    $scope.saveUser = function( user ) { 
-        if (user!=null && user.id==null) {
-			promise = UserAdminService.addUser( user );
-		} else {
-			promise = UserAdminService.updateUser( user );
-		}
-        $scope.gridApi.rowEdit.setSavePromise( user, promise );
-        
-        promise.then(function(response) { 
-			var data = response.data;                   
-			if (response.statusText == 'OK') {
-			    $scope.errorMessage = 'User information is saved successfully!';
-                $scope.$broadcast('userSaved', data);
-		    } else {
-		    	$scope.errorMessage = 'Oops, we received your request, but there was an error processing it.';
-                $scope.openErrorMessageModalDialog('Error while updating user', $scope.errorMessage);
-		    }
-		}, function(response) { 
-            var data = response.data;                   
-			if (data.httpStatus == 'BAD_REQUEST' || data.httpStatus == 'INTERNAL_SERVER_ERROR') {
-			    $scope.errorMessage = response.data.message;
-                $scope.openErrorMessageModalDialog('Error while updating user', $scope.errorMessage);
-		    } else {
-		    	$scope.errorMessage = 'There was a network error. Try again later.';
-                $scope.openErrorMessageModalDialog('Error while updating user', $scope.errorMessage);
-		    }
-		});
-        
-    }; 
- 
     var messageBoxModalOptions = {
             actionButtonText: '  Got It ',
             headerText: '',
@@ -121,6 +91,46 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, UserAdmin
 		});
 	};
 	
+    $scope.saveUser = function( user ) { 
+        if (user!=null && user.id==null) {
+			promise = UserAdminService.addUser( user );
+		} else {
+			promise = UserAdminService.updateUser( user );
+		}
+        $scope.gridApi.rowEdit.setSavePromise( user, promise );
+        
+        promise.then(function(response) { 
+			var data = response.data;                   
+			if (response.statusText == 'OK') {
+			    $scope.errorMessage = 'User information is saved successfully!';
+                $scope.$broadcast('userSaved', data);
+		    } else {
+		    	$scope.errorMessage = 'Oops, we received your request, but there was an error processing it.';
+                $scope.openErrorMessageModalDialog('Error while updating user', $scope.errorMessage);
+                $scope.$broadcast('userSaveErr', user);
+		    }
+		}, function(response) { 
+            var data = response.data;                   
+			if (data.httpStatus == 'BAD_REQUEST' || data.httpStatus == 'INTERNAL_SERVER_ERROR') {
+			    $scope.errorMessage = response.data.message;
+                $scope.openErrorMessageModalDialog('Error while updating user', $scope.errorMessage);
+		    } else {
+		    	$scope.errorMessage = 'There was a network error. Try again later.';
+                $scope.openErrorMessageModalDialog('Error while updating user', $scope.errorMessage);
+		    }
+            $scope.$broadcast('userSaveErr', user);
+		});
+        
+    }; 
+ 
+    $scope.getUser = function( user ) { 
+        if (user!=null && user.id!=null) {
+			UserAdminService.getUser(user.id).then(function( data ) {
+                $scope.revertUser = data;  
+            });
+		} 
+    }; 
+    
     $scope.addUser = function( user ) { 
         $scope.gridOptions.data.unshift( user );
         $scope.selectUser( $scope.gridOptions.data[0] );
@@ -136,9 +146,15 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, UserAdmin
     
     $scope.$on('userSaved', function(event, user) {  
         $scope.gridOptions.data[0] = user;   
-        $scope.selectUser( $scope.gridOptions.data[0] );                                           
+        $scope.selectUser( $scope.gridOptions.data[0] ); 
+        $scope.revertUser = null;
     });
-        
+     
+    $scope.$on('userSaveErr', function(event, user) {  
+        $scope.getUser( user );
+    });
+    
+    $scope.revertUser;
     $scope.selectedUser;
     $scope.listUsers();
 	
@@ -155,6 +171,10 @@ userModule.controller('MenuCtrl', function ($scope, $log) {
 
     $scope.canDeleteUser = function() {
         return $scope.selectedUser!=null && $scope.selectedUser.id!=null;
+    };
+    
+    $scope.canRevertUser = function() {
+        return $scope.revertUser!=null;
     };
     
     $scope.addNewUser = function() {
