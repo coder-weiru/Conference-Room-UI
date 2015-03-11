@@ -46,7 +46,7 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, UserAdmin
         columnDefs: $scope.columns,
         onRegisterApi: function(gridApi) {
           $scope.gridApi = gridApi;
-          $scope.gridApi.rowEdit.on.saveRow($scope, $scope.saveRow); 
+          $scope.gridApi.rowEdit.on.saveRow($scope, $scope.saveUser); 
           $scope.gridApi.selection.on.rowSelectionChanged($scope, function(row) { 
             if (row.isSelected) {
               $scope.selectedUser = row.entity;  
@@ -71,13 +71,13 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, UserAdmin
         });
 	  };
     
-    $scope.saveRow = function( rowEntity ) { 
-        if (rowEntity!=null && rowEntity.id==null) {
-			promise = UserAdminService.addUser( rowEntity );
+    $scope.saveUser = function( user ) { 
+        if (user!=null && user.id==null) {
+			promise = UserAdminService.addUser( user );
 		} else {
-			promise = UserAdminService.updateUser( rowEntity );
+			promise = UserAdminService.updateUser( user );
 		}
-        $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise );
+        $scope.gridApi.rowEdit.setSavePromise( user, promise );
         
         promise.then(function(response) { 
 			var data = response.data;                   
