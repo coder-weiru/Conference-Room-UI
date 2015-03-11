@@ -6,11 +6,25 @@
     	<div class="container-fluid margin-top15" ng-controller="MenuCtrl">
 		    <ul class="nav nav-pills">
 		    	<li><button class="btn btn-primary btn-large" ng-show="canAddNewUser()" ng-click="addNewUser()"><i class="icon-white icon-user"></i>Add New User</button></li>
-		        <li><button class="btn btn-primary btn-large" ng-show="canUploadPhoto()" ng-click="openPhotoUploadModalDialog(selectedUser)"><i class="icon-white icon-camera"></i>Upload User Photo</button></li>
-		        <li><button class="btn btn-primary btn-large" ng-show="canDeleteUser()"><i class="icon-white icon-user"></i>Delete User</button></li>
+		        <li><button class="btn btn-primary btn-large" ng-show="canUploadPhoto()" ng-click="uploadPhoto()"><i class="icon-white icon-camera"></i>Upload User Photo</button></li>
+		        <li><button class="btn btn-primary btn-large" ng-show="canDeleteUser()" ng-click="deleteUser()"><i class="icon-white icon-user"></i>Delete User</button></li>
                 <li><button class="btn btn-primary btn-large" ng-show="canRevertUser()" ng-click="revertUser()"><i class="icon-white icon-user"></i>   Revert   </button></li>
 		    </ul>
 		</div>
         <div id="userlist" ui-grid="gridOptions" class="grid margin-top15" ui-grid-selection ui-grid-edit ui-grid-row-edit ui-grid-cellNav></div>
     </div>
+</div>
+
+<div>
+    <script type="text/ng-template" id="userDeleteConfirmation.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Confirmation</h3>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure to delete user {{userToDelete.name}}</p>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">Yes, I'm sure</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
 </div>

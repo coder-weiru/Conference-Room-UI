@@ -1,7 +1,7 @@
 /**
  * UserAdminController
  */
-var userModule = angular.module('controller.userAdmin', [ 'service.userAdmin',  'service.userPhoto', 'service.messageBox', 'ui.grid', 'ui.grid.selection', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav']);
+var userModule = angular.module('controller.userAdmin', [ 'service.userAdmin',  'service.userPhoto', 'service.messageBox', 'ui.grid', 'ui.grid.selection', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav', 'ui.bootstrap']);
 
 userModule.controller('UserListCtrl', function($scope, $log, $timeout, UserAdminService, UserPhotoModalService, MessageBoxService) {
     
@@ -23,7 +23,8 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, UserAdmin
                         enableCellEdit: false
                       }, 
                       { field: 'name',
-                        enableCellEdit: true
+                        enableCellEdit: true,
+                        footerCellTemplate: '<div class="ui-grid-bottom-panel" style="text-align: center">Total Rows : {{grid.appScope.gridOptions.data.length}}</div>'
                       }, 
                       { field: 'email', 
                         enableCellEdit: true
@@ -40,7 +41,7 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, UserAdmin
         enableSelectAll: true,
         multiSelect: false,
         noUnselect: false,
-        showGridFooter: true,
+        showColumnFooter: true,
         enableSorting: true,
         enableCellEditOnFocus: true,
         columnDefs: $scope.columns,
@@ -53,23 +54,12 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, UserAdmin
             } else {
               $scope.selectedUser = null;
             }
+            $log.log($scope.gridApi.selection.getSelectedRows());
             $log.log($scope.selectedUser);
           });
         }
     };
  
-    var fileUploadModalOptions = {
-        closeButtonText: 'Cancel',
-        actionButtonText: 'Upload picture file...',
-        headerText: 'Upload Headshot Photo',
-        bodyText: 'Please select a headshot picture file to upload.'
-    };
-
-    $scope.openPhotoUploadModalDialog = function( rowEntity ) {
-		    UserPhotoModalService.showModal({}, fileUploadModalOptions).then(function (result) {
-            console.log(result);
-        });
-    };
     
     var messageBoxModalOptions = {
             actionButtonText: '  Got It ',
@@ -139,10 +129,24 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, UserAdmin
     $scope.selectUser = function( user ) {  
         $timeout(function () {
             $scope.gridApi.selection.selectRow( user );
-            $scope.selectedUser = user;  
           },
         10);
     };
+    
+    $scope.unSelectUser = function( user ) {  
+        $timeout(function () {debugger;
+            $scope.gridApi.selection.toggleRowSelection( user );
+          },
+        10);
+    };
+    
+    $scope.removeUser = function( user ) { 
+        if (user!=null && user.id!=null) {
+			UserAdminService.deleteUser(user.id).then(function( data ) {
+                $scope.$broadcast('userDeleted', data); 
+            });
+		} 
+    }; 
     
     $scope.$on('userSaved', function(event, user) {  
         $scope.gridOptions.data[0] = user;   
@@ -155,13 +159,23 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, UserAdmin
         $scope.getUser( user );
     });
     
+    $scope.$on('userDeleted', function(event, user) {  
+        $scope.unSelectUser( user );
+        for (var i = 0; i < $scope.gridOptions.data.length; i++) { 
+            if ($scope.gridOptions.data[i].id == user.id) { 
+                $scope.gridOptions.data.splice(i,1);
+                break;
+            }
+        }
+    });
+    
     $scope.originalUser;
     $scope.selectedUser;
     $scope.listUsers();
 	
 });
 
-userModule.controller('MenuCtrl', function ($scope, $log) {
+userModule.controller('MenuCtrl', function ($scope, $log, $modal) {
     $scope.canAddNewUser = function() {
         return $scope.selectedUser==null;
     };
@@ -188,7 +202,7 @@ userModule.controller('MenuCtrl', function ($scope, $log) {
 		$scope.addUser(user);
 	};
     
-    $scope.revertUser = function() { debugger;
+    $scope.revertUser = function() { 
         for (var i = 0; i < $scope.gridOptions.data.length; i++) { 
             if ($scope.gridOptions.data[i].id == $scope.originalUser.id) { 
                 $scope.gridOptions.data[i] = $scope.originalUser; 
@@ -198,4 +212,69 @@ userModule.controller('MenuCtrl', function ($scope, $log) {
             }
         }
 	};
+    
+    var messageBoxModalOptions = {
+            actionButtonText: '  Got It ',
+            headerText: '',
+            bodyText: ''
+    };
+    
+    $scope.openDeleteUserConfirmationModalDialog = function( header, message ) {
+        messageBoxModalOptions.headerText = header;
+        messageBoxModalOptions.bodyText = message;                                                              
+        MessageBoxService.showModal({}, messageBoxModalOptions).then(function (result) {
+            console.log(result);
+        });
+	}; 
+    
+    $scope.deleteUser = function() {
+		var modalInstance = $modal.open({
+          templateUrl: 'userDeleteConfirmation.html',
+          controller: 'UserDeleteConfirmationCtrl',
+          size: 'sm',
+          resolve: {
+            userToDelete: function () {
+                return $scope.selectedUser;
+            }
+          }
+        });
+
+        modalInstance.result.then(function (message) {
+              if (message=='ok') {
+                $scope.removeUser( $scope.selectedUser );
+              }
+            }, 
+            function () {
+              $log.info('Modal dismissed at: ' + new Date());
+            });
+	};
+    
+    var fileUploadModalOptions = {
+        closeButtonText: 'Cancel',
+        actionButtonText: 'Upload picture file...',
+        headerText: 'Upload Headshot Photo',
+        bodyText: 'Please select a headshot picture file to upload.'
+    };
+
+    $scope.openPhotoUploadModalDialog = function( rowEntity ) {
+            UserPhotoModalService.showModal({}, fileUploadModalOptions).then(function (result) {
+            console.log(result);
+        });
+    };
+    
+    $scope.uploadPhoto = function() {
+        openPhotoUploadModalDialog($scope.selectedUser);
+	};
+});
+
+userModule.controller('UserDeleteConfirmationCtrl', function ($scope, $modalInstance, userToDelete) {
+    $scope.userToDelete = userToDelete;
+    
+    $scope.ok = function () {
+        $modalInstance.close('ok');
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
 });
