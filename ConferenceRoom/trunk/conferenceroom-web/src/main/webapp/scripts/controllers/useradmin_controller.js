@@ -71,7 +71,7 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, UserAdmin
         });
 	  };
     
-    $scope.saveRow = function( rowEntity ) { debugger;
+    $scope.saveRow = function( rowEntity ) { 
         if (rowEntity!=null && rowEntity.id==null) {
 			promise = UserAdminService.addUser( rowEntity );
 		} else {
@@ -79,15 +79,16 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, UserAdmin
 		}
         $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise );
         
-        promise.then(function(response) { debugger;
+        promise.then(function(response) { 
 			var data = response.data;                   
 			if (response.statusText == 'OK') {
 			    $scope.errorMessage = 'User information is saved successfully!';
+                $scope.$broadcast('userSaved', data);
 		    } else {
 		    	$scope.errorMessage = 'Oops, we received your request, but there was an error processing it.';
                 $scope.openErrorMessageModalDialog('Error while updating user', $scope.errorMessage);
 		    }
-		}, function(response) { debugger;
+		}, function(response) { 
             var data = response.data;                   
 			if (data.httpStatus == 'BAD_REQUEST' || data.httpStatus == 'INTERNAL_SERVER_ERROR') {
 			    $scope.errorMessage = response.data.message;
@@ -121,14 +122,23 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, UserAdmin
 	};
 	
     $scope.addUser = function( user ) { 
-		    $scope.gridOptions.data.unshift( user );
-        $timeout(function () {
-            $scope.gridApi.selection.selectRow($scope.gridOptions.data[0]);
-          },
-        10)
-        
+        $scope.gridOptions.data.unshift( user );
+        $scope.selectUser( $scope.gridOptions.data[0] );
 	};
 	
+    $scope.selectUser = function( user ) {  
+        $timeout(function () {
+            $scope.gridApi.selection.selectRow( user );
+            $scope.selectedUser = user;  
+          },
+        10);
+    };
+    
+    $scope.$on('userSaved', function(event, user) {  
+        $scope.gridOptions.data[0] = user;   
+        $scope.selectUser( $scope.gridOptions.data[0] );                                           
+    });
+        
     $scope.selectedUser;
     $scope.listUsers();
 	
@@ -136,8 +146,7 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, UserAdmin
 
 userModule.controller('MenuCtrl', function ($scope, $log) {
     $scope.canAddNewUser = function() {
-        //return $scope.selectedUser!=null;
-        return true;
+        return $scope.selectedUser==null;
     };
 
     $scope.canUploadPhoto = function() {
@@ -145,13 +154,13 @@ userModule.controller('MenuCtrl', function ($scope, $log) {
     };
 
     $scope.canDeleteUser = function() {
-        return $scope.selectedUser!=null;
+        return $scope.selectedUser!=null && $scope.selectedUser.id!=null;
     };
     
     $scope.addNewUser = function() {
 		var user = {};
-		user.name = 'New User';
-		user.email = 'New User Email';
+		user.name = ' ';
+		user.email = ' ';
 		user.group = false;
         user.photoUrl = ' ';
                                     
