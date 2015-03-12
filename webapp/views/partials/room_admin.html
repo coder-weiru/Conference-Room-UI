@@ -2,4 +2,36 @@
     <div>
         <h3>Conference Room Management</h3>    
     </div>
+    
+    <div class="container-fluid margin-top15" ng-controller="RoomCarouselCtrl">
+      <div class="row">
+        <div class="col-md-6">
+            <div style="height: 400px">
+                <carousel interval="slideInterval">
+                  <slide ng-repeat="slide in slides" active="slide.active">
+                    <img ng-src="{{slide.image}}" style="margin:auto;">
+                    <div class="carousel-caption">
+                      <h4>Slide {{$index}}</h4>
+                      <p>{{slide.text}}</p>
+                    </div>
+                  </slide>
+                </carousel>
+            </div>
+        </div>
+        <div class="col-md-6">
+          
+        </div>
+      </div>
+        
+      <div class="row">
+        <div class="col-md-6">
+          <button type="button" class="btn btn-info" ng-click="addSlide()">Add Conference Room</button>
+        </div>
+        <div class="col-md-6">
+          Interval, in milliseconds: <input type="number" class="form-control" ng-model="slideInterval">
+          <br />Enter a negative number or 0 to stop the interval.
+        </div>
+      </div>
+    </div>
+    
 </div>
