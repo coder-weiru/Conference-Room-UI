@@ -62,10 +62,28 @@
             <h3 class="modal-title">Upload Headshot Photo</h3>
         </div>
         <div class="modal-body">
-            <p>Please select a headshot picture file to upload.</p>
+		<div flow-init="{target: '/conferenceroom-service/service/photo/AlbumUsers/add'}"
+			flow-file-added="!!{png:1,gif:1,jpg:1,jpeg:1}[$file.getExtension()]"
+			flow-files-submitted="$flow.upload()"
+			flow-file-success="$file.msg = $message">
+
+			Upload image:
+			<input type="file" flow-btn/>
+
+			<!--span class="button button-icon" flow-btn>Upload File</span-->
+
+			<table>
+		    	<tr ng-repeat="file in $flow.files">
+ 			       	<td>{{$index+1}}</td>
+  			      	<td>{{file.name}}</td>
+			       	<td>{{file.msg}}</td>
+				</tr>
+			</table>
+			<button class="btn btn-primary" ng-click="cancel()">Cancel</button>
+		</div>
         <div class="modal-footer">
-            <button class="btn btn-primary" ng-click="ok()">Upload picture file...</button>
-            <button class="btn btn-primary" ng-click="cancel()">Cancel</button>
+            <!--button class="btn btn-primary" ng-click="ok()">Upload picture file...</button-->
+            <!--button class="btn btn-primary" ng-click="cancel()">Cancel</button!-->
         </div>
     </script>
 </div>
