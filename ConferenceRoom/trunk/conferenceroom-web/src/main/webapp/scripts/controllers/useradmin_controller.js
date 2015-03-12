@@ -1,7 +1,7 @@
 /**
  * UserAdminController
  */
-var userModule = angular.module('controller.userAdmin', [ 'service.userAdmin',  'service.userPhoto', 'service.messageBox', 'ui.grid', 'ui.grid.selection', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav', 'ui.bootstrap']);
+var userModule = angular.module('controller.userAdmin', [ 'service.userAdmin', 'ui.grid', 'ui.grid.selection', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav', 'ui.bootstrap']);
 
 userModule.controller('UserListCtrl', function($scope, $log, $timeout, $modal, UserAdminService) {
     

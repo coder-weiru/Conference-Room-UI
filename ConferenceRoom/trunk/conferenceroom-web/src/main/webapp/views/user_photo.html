@@ -1,12 +1,48 @@
-<div class="modal-header">
-  <h3>{{modalOptions.headerText}}</h3>
+
+<!-- flow-init="{target: '/upload'}" -->
+
+<div flow-init
+	flow-file-added="!!{png:1,gif:1,jpg:1,jpeg:1}[$file.getExtension()]"
+	flow-files-submitted="$flow.upload()"
+	flow-file-success="$file.msg = $message">
+
+	Upload image:
+	<input type="file" flow-btn/>
+
+	<span class="button button-icon" flow-btn>Upload File</span>
+
+	<table>
+    	<tr ng-repeat="file in $flow.files">
+        	<td>{{$index+1}}</td>
+        	<td>{{file.name}}</td>
+        	<td>{{file.msg}}</td>
+		</tr>
+	</table>
 </div>
-<div class="modal-body">
-  <p>{{modalOptions.bodyText}}</p>
-</div>
-<div class="modal-footer">
-  <button type="button" class="btn" 
-          data-ng-click="modalOptions.close()">{{modalOptions.closeButtonText}}</button>
-  <button class="btn btn-primary" 
-          data-ng-click="modalOptions.ok();">{{modalOptions.actionButtonText}}</button>
+
+<div class="container" flow-init
+     flow-file-added="!!{png:1,gif:1,jpg:1,jpeg:1}[$file.getExtension()]"
+     flow-files-submitted="$flow.upload()">
+  <h1>Upload image</h1>
+  <hr class="soften"/>
+
+  <div>
+    <div class="thumbnail" ng-hide="$flow.files.length">
+      <img src="http://www.placehold.it/200x150/EFEFEF/AAAAAA&text=no+image" />
+    </div>
+    <div class="thumbnail" ng-show="$flow.files.length">
+      <img flow-img="$flow.files[0]" />
+    </div>
+    <div>
+      <a href="#" class="btn" ng-hide="$flow.files.length" flow-btn flow-attrs="{accept:'image/*'}">Select image</a>
+      <a href="#" class="btn" ng-show="$flow.files.length" flow-btn flow-attrs="{accept:'image/*'}">Change</a>
+      <a href="#" class="btn btn-danger" ng-show="$flow.files.length"
+         ng-click="$flow.cancel()">
+        Remove
+      </a>
+    </div>
+    <p>
+      Only PNG,GIF,JPG files allowed.
+    </p>
+  </div>
 </div>
