@@ -24,6 +24,14 @@ roomModule.controller('RoomCarouselCtrl', function($scope, $rootScope, $log, $ti
         });
     };
     
+    $scope.pauseSlide = function( ) {
+        $scope.slideInterval = 0;
+    };
+    
+    $scope.continueSlide = function( ) {
+        $scope.slideInterval = 5000;
+    };
+    
     $scope.listRooms = function() { 
 		RoomAdminService.listRooms().then(function(rooms) {
             $scope.rooms = rooms;

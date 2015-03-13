@@ -32,14 +32,14 @@
                                 
                               <div class="form-group">
                                 <label class="control-label" for="roomName">Name</label>
-                                <input type="text" class="form-control" id="roomName" placeholder="Enter Conference Room Name" ng-model="room.name" ng-trim="true" required>
+                                <input type="text" class="form-control" id="roomName" placeholder="Enter Conference Room Name" ng-model="room.name" ng-trim="true" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()" required>
                                 <span class="label label-danger" ng-show="roomForm.roomName.$error.required">Required!</span>
                                 <p class="help-block">Enter a unique conference room name</p>
                               </div>
 
                               <div class="form-group">
                                 <label class="control-label" for="roomLocation">Location</label>
-                                <input type="text" class="form-control" id="roomLocation" placeholder="Enter Conference Room Location" ng-model="room.location" ng-trim="true" required>
+                                <input type="text" class="form-control" id="roomLocation" placeholder="Enter Conference Room Location" ng-model="room.location" ng-trim="true" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()" required>
                                 <span class="label label-danger" ng-show="roomForm.roomLocation.$error.required">Required!</span>
                                 <p class="help-block">Enter descriptive conference room location</p>
                               </div>
@@ -53,7 +53,7 @@
                               <div class="row"> 
                                   <div class="col-md-6">
                                       <div class="form-group">
-                                        <div class="checkbox">
+                                        <div class="checkbox" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()">
                                           <label>
                                             <input type="checkbox" ng-model="room.projectorAvailable"> Does the conference room have projector? {{room.projectorAvailable?'Yes':'No'}}
                                           </label>
@@ -62,7 +62,7 @@
                                   </div>
                                   <div class="col-md-6">
                                       <div class="form-group">
-                                        <div class="checkbox">
+                                        <div class="checkbox" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()">
                                           <label>
                                             <input type="checkbox" ng-model="room.tvAvailable"> Does the conference room have TV? {{room.tvAvailable?'Yes':'No'}}
                                           </label>
@@ -73,7 +73,7 @@
                               <div class="row"> 
                                   <div class="col-md-6">
                                       <div class="form-group">
-                                        <div class="checkbox">
+                                        <div class="checkbox" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()">
                                           <label>
                                             <input type="checkbox" ng-model="room.videoConferenceAvailable"> Does it provide video conferencing capability? {{room.videoConferenceAvailable?'Yes':'No'}}
                                           </label>
@@ -82,7 +82,7 @@
                                   </div>
                                   <div class="col-md-6">
                                       <div class="form-group">
-                                        <div class="checkbox">
+                                        <div class="checkbox" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()">
                                           <label>
                                             <input type="checkbox" ng-model="room.audioConferenceAvailable"> Does it provide audio conferencing capability? {{room.audioConferenceAvailable?'Yes':'No'}}
                                           </label>
@@ -93,7 +93,7 @@
                                 
                               <div class="input-group">
                                   <label class="control-label" for="roomCapacity">Capacity</label>
-                                  <input type="number" class="form-control" id="roomCapacity" ng-model="room.capacity" placeholder="10" min="2" max="99" required>
+                                  <input type="number" class="form-control" id="roomCapacity" ng-model="room.capacity" placeholder="10" min="2" max="99" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()" required>
                                   <span class="label label-danger" ng-show="roomForm.roomCapacity.$error.required">Required!</span>
                                   <span class="label label-danger" ng-show="roomForm.roomCapacity.$error.number">Not valid number!</span>
                               </div>  
