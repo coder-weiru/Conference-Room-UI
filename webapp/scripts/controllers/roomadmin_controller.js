@@ -9,17 +9,28 @@ roomModule.controller('RoomCarouselCtrl', function($scope, $log, $timeout, $moda
     $scope.slideInterval = 5000;
     var slides = $scope.slides = [];
     
-    $scope.addSlide = function() {
+    $scope.clearSlides = function() {
+        slides.splice(0, slides.length);
+    };
+    
+    $scope.addSlide = function( room ) {
         var newWidth = 600 + slides.length + 1;
         slides.push({
-          image: 'http://placekitten.com/' + newWidth + '/300',
-          text: ['More','Extra','Lots of','Surplus'][slides.length % 4] + ' ' +
-            ['Cats', 'Kittys', 'Felines', 'Cutes'][slides.length % 4]
+          photoUrl: room.photoUrl,
+          name: room.name,
+          location: room.location,
+          capacity: room.capacity 
         });
     };
     
-    for (var i=0; i<4; i++) {
-        $scope.addSlide();
-      }
-	
+    $scope.listRooms = function() { 
+		RoomAdminService.listRooms().then(function(rooms) {
+			$scope.clearSlides();
+            for ( var i = 0; i < rooms.length; i++ ) {
+                $scope.addSlide( rooms[i] );
+            }
+		});
+	};
+    
+    $scope.listRooms();
 });
