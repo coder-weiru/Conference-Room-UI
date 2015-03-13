@@ -9,29 +9,26 @@
             <div style="height: 400px">
                 <carousel interval="slideInterval">
                   <slide ng-repeat="slide in slides" active="slide.active">
-                    <img ng-src="{{slide.image}}" style="margin:auto;">
+                    <img ng-src="{{slide.photoUrl}}" style="margin:auto;">
                     <div class="carousel-caption">
-                      <h4>Slide {{$index}}</h4>
-                      <p>{{slide.text}}</p>
+                        <h4>Room {{slide.name}}</h4>
+                        <p>Location {{slide.location}}</p>
+                        <p>Capacity {{slide.capacity}}</p>
                     </div>
                   </slide>
                 </carousel>
             </div>
         </div>
         <div class="col-md-6">
-          
+            <div class="row">
+                <div class="col-md-6">
+                  <button type="button" class="btn btn-info" ng-click="addSlide()">Add Conference Room</button>
+                </div>
+            </div>
         </div>
+          
       </div>
         
-      <div class="row">
-        <div class="col-md-6">
-          <button type="button" class="btn btn-info" ng-click="addSlide()">Add Conference Room</button>
-        </div>
-        <div class="col-md-6">
-          Interval, in milliseconds: <input type="number" class="form-control" ng-model="slideInterval">
-          <br />Enter a negative number or 0 to stop the interval.
-        </div>
-      </div>
     </div>
     
 </div>
