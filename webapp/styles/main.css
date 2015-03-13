@@ -128,7 +128,7 @@ html, body, #right-panel {
 .margin-top100 { margin-top: 100px; }
 .margin-top150 { margin-top: 150px; }
 
-// Angular
+// Angular JS
 [ng-click],
 [data-ng-click],
 [x-ng-click] {
