@@ -51,14 +51,16 @@
             <div class="navbar navbar-default navbar-fixed-top" role="navigation">
                   <div class="container-fluid">
                         <div class="navbar-header">
-                            <a href="#" class="btn btn-default" id="btn-menu" snap-toggle="" ng-click="toggleMenu()" style="font-size: 22px;border:0px solid transparent"><span class="glyphicon glyphicon-align-justify"></span></a>
                             <button type="button" class="navbar-toggle" data-toggle="collapse" 
                                     data-target=".navbar-ex1-collapse">
                                 <span class="sr-only">Toggle navigation</span>
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
-                            </button>                  
+                            </button>   
+                            <button snap-toggle id="btn-menu" class="button button-icon" ng-click="toggleMenu()" style="font-size: 22px; border:0px solid transparent; padding: 11px 16px;">
+                                <i class="glyphicon glyphicon-menu-hamburger"></i>
+                            </button>
                         </div>  
                         <p class="navbar-text"><strong>         Conference Room Application</strong></p>
                   </div>
