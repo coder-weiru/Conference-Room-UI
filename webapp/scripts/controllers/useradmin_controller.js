@@ -119,7 +119,7 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, $modal, U
 
         modalInstance.result.then(function (message) {
               if (message=='ok') {
-                $scope.removeUser( $scope.selectedUser );
+                
               }
             }, 
             function () {

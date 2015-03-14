@@ -7,22 +7,6 @@ var roomModule = angular.module('controller.roomAdmin', [ 'service.roomAdmin', '
 roomModule.controller('RoomCarouselCtrl', function($scope, $rootScope, $log, $timeout, $modal, RoomAdminService) {
     
     $scope.slideInterval = 5000;
-    $scope.rooms = [];
-    var slides = $scope.slides = [];
-    
-    $scope.clearSlides = function() {
-        slides.splice(0, slides.length);
-    };
-    
-    $scope.addSlide = function( room ) {
-        var newWidth = 600 + slides.length + 1;
-        slides.push({
-          photoUrl: room.photoUrl,
-          name: room.name,
-          location: room.location,
-          capacity: room.capacity 
-        });
-    };
     
     $scope.pauseSlide = function( ) {
         $scope.slideInterval = 0;
@@ -32,37 +16,35 @@ roomModule.controller('RoomCarouselCtrl', function($scope, $rootScope, $log, $ti
         $scope.slideInterval = 5000;
     };
     
+    $scope.rooms = [];
+    
     $scope.listRooms = function() { 
 		RoomAdminService.listRooms().then(function(rooms) {
             $scope.rooms = rooms;
-			$scope.clearSlides();
-            for ( var i = 0; i < rooms.length; i++ ) {
-                $scope.addSlide( rooms[i] );
-            }
 		});
 	};
     
     $scope.listRooms();
     
     $scope.$watch(function () {
-      for (var i = 0; i < slides.length; i++) {
-        if (slides[i].active) {
-          return slides[i];
+      for (var i = 0; i < $scope.rooms.length; i++) {
+        if ($scope.rooms[i].active) {
+          return $scope.rooms[i];
         }
       }
-    }, function (currentSlide, previousSlide) {
-      if (currentSlide !== previousSlide) {
-          console.log('currentSlide:', currentSlide);
-          $rootScope.$broadcast('slideChange', slides.indexOf(currentSlide));
+    }, function (currentRoom, previousRoom) {
+      if (currentRoom !== previousRoom) {
+          console.log('current room:', currentRoom);
+          $rootScope.$broadcast('slideChange', $scope.rooms.indexOf(currentRoom));
       }
     });
 });
 
-roomModule.controller('RoomCtrl', function($scope, $log, RoomAdminService) {
+roomModule.controller('RoomCtrl', function($scope, $log, $modal, RoomAdminService) {
 	
     var room = $scope.room = {};
     
-	$scope.saveRoom = function () {
+	$scope.saveRoom = function () { 
 		// If form is invalid, return and let AngularJS show validation errors.
 		if ($scope.roomForm.$invalid) {
 		    return;
@@ -77,10 +59,8 @@ roomModule.controller('RoomCtrl', function($scope, $log, RoomAdminService) {
 			var data = response.data;                   
 			if (response.statusText == 'OK') {
 			    $scope.errorMessage = 'Room information is saved successfully!';
-                $scope.$broadcast('roomSaved', data);
 		    } else {
 		    	$scope.showMessage('Oops, we received your request, but there was an error processing it.');
-                $scope.$broadcast('roomSaveErr', user);
 		    }
 		}, function(response) { 
             var data = response.data;                   
@@ -89,45 +69,52 @@ roomModule.controller('RoomCtrl', function($scope, $log, RoomAdminService) {
 		    } else {
 		    	$scope.showMessage('There was a network error. Try again later.');
 		    }
-            $scope.$broadcast('roomSaveErr', user);
 		});
 	};
     
-	$scope.revertRoom = function() {
-		$scope.room = angular.copy($scope.originalUser(), $scope.room);
-		$scope.roomForm.$setPristine();
+    $scope.showMessage = function( errorMessage ) {
+       var modalInstance = $modal.open({
+          templateUrl: 'roomSaveErrorMessage.html',
+          controller: 'RoomSaveErrorMessageCtrl',
+          size: 'sm',
+          resolve: {
+            roomToSave: function () {
+                return $scope.room;
+            },
+            errorMessage: function () {
+                return errorMessage;
+            }
+          }
+        });
+
+        modalInstance.result.then(function (message) {
+              if (message=='ok') {
+                
+              }
+            }, 
+            function () {
+              $log.info('Modal dismissed at: ' + new Date());
+            });
+    };
+    
+    $scope.isNewRoom = function( room ) {
+		return room!=null && room.id==null;
 	};
-	
-	$scope.canRevert = function() {
-		return !angular.equals($scope.room, $scope.originalRoom());
-	};
-	
+    
 	$scope.canSave = function() {
 	    return $scope.roomForm.$valid && !angular.equals($scope.room, $scope.originalRoom());
 	};
 	
-	$scope.cancel = function() {
-		if ($scope.isNewRoom($scope.room)) {
-			$scope.deleteNewRoom();
-		} else {
-			$scope.revertRoom();
-		}
-		$scope.deSelectRoom();
-	};
-	
-	$scope.originalRoom = function() {
-		var origRoom = null;
-		angular.forEach($scope.originalRoomList, function( room ) {
-			var uid = $scope.selectedRoom.id;
-			if (uid===room.id) {
-		    	origRoom = room;
-		    } 
-		});
-		return origRoom;
-	};	
-    
-    $scope.$on('slideChange', function(event, index) { 
+	$scope.$on('slideChange', function(event, index) { 
         $scope.room = $scope.rooms[index];
     });
 	
+});
+
+roomModule.controller('RoomSaveErrorMessageCtrl', function ($scope, $modalInstance, roomToSave, errorMessage) {
+    $scope.roomToSave = roomToSave;
+    $scope.errorMessage = errorMessage;
+    $scope.ok = function () {
+        $modalInstance.close('ok');
+    };
 });

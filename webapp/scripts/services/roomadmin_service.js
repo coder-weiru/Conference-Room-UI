@@ -35,7 +35,7 @@ angular.module('service.roomAdmin', [])
 	service.updateRoom = function(room) {
 		var roomAdminServiceUrl = SERVICE_CONFIG.URL + "/service/room/update";
 		var postConfig = {};
-		return $http.post(roomAdminServiceUrl, data, postConfig).then(function(response) {
+		return $http.post(roomAdminServiceUrl, room, postConfig).then(function(response) {
 			return response;
 		});
 	};

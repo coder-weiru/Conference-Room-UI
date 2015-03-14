@@ -8,12 +8,12 @@
         <div class="col-md-6">
             <div style="height: 400px">
                 <carousel interval="slideInterval">
-                  <slide ng-repeat="slide in slides" active="slide.active">
-                    <img ng-src="{{slide.photoUrl}}" alt="{{slide.name}}" style="margin:auto;">
+                  <slide ng-repeat="room in rooms" active="room.active">
+                    <img ng-src="{{room.photoUrl}}" alt="{{room.name}}" style="margin:auto;">
                     <div class="carousel-caption">
-                        <h4>Room {{slide.name}}</h4>
-                        <p>Location {{slide.location}}</p>
-                        <p>Capacity {{slide.capacity}}</p>
+                        <h4>{{room.name}}</h4>
+                        <p>{{room.location}}</p>
+                        <p>Capacity {{room.capacity}}</p>
                     </div>
                   </slide>
                 </carousel>
@@ -102,7 +102,7 @@
                                   <div class="col-md-3">
                                   </div>
                                   <div class="col-md-6">
-                                    <button class="btn btn-info">Update Room Information</button>
+                                    <button class="btn btn-info" ng-click="saveRoom()">Update Room Information</button>
                                   </div>
                                   <div class="col-md-3">
                                   </div>
@@ -117,4 +117,18 @@
         
     </div>
     
+</div>
+
+<div>
+    <script type="text/ng-template" id="roomSaveErrorMessage.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Error</h3>
+        </div>
+        <div class="modal-body">
+            <p>Error encountered while saving room {{roomToSave.name}}: </p>
+            <p> {{errorMessage}} </p>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">Got it</button>
+        </div>
+    </script>
 </div>
