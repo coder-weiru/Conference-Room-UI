@@ -16,7 +16,7 @@ roomModule.controller('RoomCarouselCtrl', function($scope, $rootScope, $log, $ti
         $scope.slideInterval = 5000;
     };
     
-    $scope.rooms = [];
+    var rooms = $scope.rooms = [];
     
     $scope.listRooms = function() { 
 		RoomAdminService.listRooms().then(function(rooms) {
@@ -24,9 +24,22 @@ roomModule.controller('RoomCarouselCtrl', function($scope, $rootScope, $log, $ti
 		});
 	};
     
+    $scope.addRoom = function( room ) { 
+        $scope.pauseSlide();
+        
+        $scope.rooms.forEach(function (element) {
+            element.active = false;
+        });
+        
+        $scope.rooms.push( room );
+        if ( $scope.rooms[rooms.length-1] ) {
+			$scope.rooms[rooms.length-1].active=true;
+		}
+	};
+    
     $scope.listRooms();
     
-    $scope.$watch(function () {
+    $scope.$watch(function () { 
       for (var i = 0; i < $scope.rooms.length; i++) {
         if ($scope.rooms[i].active) {
           return $scope.rooms[i];
@@ -44,7 +57,7 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, RoomAdminServic
 	
     var room = $scope.room = {};
     
-	$scope.saveRoom = function () { debugger;
+	$scope.saveRoom = function () { 
 		// If form is invalid, return and let AngularJS show validation errors.
 		if ($scope.roomForm.$invalid) {
 		    return;
@@ -99,6 +112,20 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, RoomAdminServic
               $log.info('Modal dismissed at: ' + new Date());
             });
     };
+    
+    $scope.addNewRoom = function() {
+		var room = {};
+		room.name = '';
+		room.photoUrl = '';
+		room.location = '';
+        room.capacity = 0;
+        room.projectorAvailable = false;
+        room.tvAvailable = false;
+        room.videoConferenceAvailable = false;
+        room.audioConferenceAvailable = false;
+        room.active = true;
+		$scope.addRoom(room);
+	};
     
     $scope.isNewRoom = function( room ) {
 		return room!=null && room.id==null;
