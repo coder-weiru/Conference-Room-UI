@@ -19,6 +19,9 @@ appModule.controller('MainCtrl', function($scope, $routeParams) {
         $scope.showMenu = !$scope.showMenu;
     }
 
+    $scope.snapOptions = {
+        disable: 'right'
+    };
 });
 
 appModule.config(['$routeProvider',
