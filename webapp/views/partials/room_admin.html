@@ -9,7 +9,7 @@
             <div style="height: 400px">
                 <carousel interval="slideInterval">
                   <slide ng-repeat="room in rooms" active="room.active">
-                    <img ng-src="{{room.photoUrl}}" alt="{{room.name}}" style="margin:auto;">
+                    <img ng-src="{{url = (room.photoUrl? room.photoUrl : 'images/img_not_available_big.png')}}" alt="{{room.name}}" style="margin:auto;">
                     <div class="carousel-caption">
                         <h4>{{room.name}}</h4>
                         <p>{{room.location}}</p>
@@ -22,7 +22,7 @@
         <div class="col-md-6">
             <div ng-controller="RoomCtrl">
                 <div>
-                  <button type="button" class="btn btn-info" ng-click="addSlide()">Add Conference Room</button>
+                  <button type="button" class="btn btn-info" ng-click="addNewRoom()">Add Conference Room</button>
                 </div>
                 
                 <div class="panel panel-primary margin-top15">
