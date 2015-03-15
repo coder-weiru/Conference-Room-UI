@@ -21,10 +21,10 @@
         </div>
         <div class="col-md-6">
             <div ng-controller="RoomCtrl">
-                <div>
-                  <button type="button" class="btn btn-info" ng-click="addNewRoom()">Add Conference Room</button>
-                </div>
-                
+                <ul class="nav nav-pills">
+                        <li><button type="button" class="btn btn-info" ng-click="addNewRoom()">Add Conference Room</button></li>
+                        <li><button type="button" class="btn btn-info" ng-show="canCancelSave()" ng-click="cancelAddRoom()">   Cancel  </button></li>
+                </ul>
                 <div class="panel panel-primary margin-top15">
                     
                     <div class="panel-body">

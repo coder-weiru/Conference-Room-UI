@@ -127,6 +127,13 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, RoomAdminServic
 		$scope.addRoom(room);
 	};
     
+    $scope.cancelAddRoom = function() {
+        if ($scope.room && !$scope.room.id) {
+            var index = $scope.rooms.indexOf($scope.room); 
+            $scope.rooms.splice(index,1);
+        }
+    }
+    
     $scope.isNewRoom = function( room ) {
 		return room!=null && room.id==null;
 	};
@@ -135,6 +142,10 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, RoomAdminServic
 	    return $scope.roomForm.$valid && $scope.roomForm.$dirty;
 	};
 	
+    $scope.canCancelSave = function() { 
+	    return !$scope.room.id;
+	};
+    
 	$scope.$on('slideChange', function(event, index) { 
         $scope.room = $scope.rooms[index];
     });
