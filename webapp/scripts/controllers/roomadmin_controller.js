@@ -44,7 +44,7 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, RoomAdminServic
 	
     var room = $scope.room = {};
     
-	$scope.saveRoom = function () { 
+	$scope.saveRoom = function () { debugger;
 		// If form is invalid, return and let AngularJS show validation errors.
 		if ($scope.roomForm.$invalid) {
 		    return;
@@ -59,8 +59,10 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, RoomAdminServic
 			var data = response.data;                   
 			if (response.statusText == 'OK') {
 			    $scope.errorMessage = 'Room information is saved successfully!';
+                $scope.$broadcast('roomSaved', data);
 		    } else {
 		    	$scope.showMessage('Oops, we received your request, but there was an error processing it.');
+                $scope.$broadcast('roomSaveErr', user);
 		    }
 		}, function(response) { 
             var data = response.data;                   
@@ -69,6 +71,7 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, RoomAdminServic
 		    } else {
 		    	$scope.showMessage('There was a network error. Try again later.');
 		    }
+            $scope.$broadcast('roomSaveErr', user);
 		});
 	};
     
@@ -102,11 +105,19 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, RoomAdminServic
 	};
     
 	$scope.canSave = function() {
-	    return $scope.roomForm.$valid && !angular.equals($scope.room, $scope.originalRoom());
+	    return $scope.roomForm.$valid && $scope.roomForm.$dirty;
 	};
 	
 	$scope.$on('slideChange', function(event, index) { 
         $scope.room = $scope.rooms[index];
+    });
+    
+    $scope.$on('roomSaved', function(event, user) {  
+        $scope.roomForm.$setPristine();
+    });
+     
+    $scope.$on('roomSaveErr', function(event, user) {  
+        $scope.roomForm.$setPristine();
     });
 	
 });
