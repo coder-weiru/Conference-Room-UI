@@ -1,7 +1,7 @@
 /**
  * Generic Message Box
  */
-angular.module('service.messageBox', ['ui.bootstrap']).service('MessageBoxService', ['$modal',
+angular.module('service.messageBox', ['ui.bootstrap']).service('$msgbox', ['$modal',
     
     function ($modal) {
 
@@ -9,7 +9,8 @@ angular.module('service.messageBox', ['ui.bootstrap']).service('MessageBoxServic
             backdrop: true,
             keyboard: true,
             modalFade: true,
-            templateUrl: 'views/message_box.html'
+            templateUrl: 'views/msgbox.html',
+            buttons: ['ok', 'cancel']
         };
 
         var modalOptions = {
@@ -49,6 +50,17 @@ angular.module('service.messageBox', ['ui.bootstrap']).service('MessageBoxServic
             }
 
             return $modal.open(tempModalDefaults).result;
+        };
+        
+        this.showSuccessMessage = function( message ) {
+           var modalOptions = {
+                actionButtonText: '  OK  ',
+                headerText: 'Success',
+                bodyText: message,
+                buttons: ['ok']
+            };
+
+            this.showModal({}, modalOptions);
         };
 
 }]);
