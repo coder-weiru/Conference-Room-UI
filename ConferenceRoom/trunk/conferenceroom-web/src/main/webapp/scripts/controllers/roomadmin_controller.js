@@ -2,9 +2,9 @@
 /**
  * RoomAdminController
  */
-var roomModule = angular.module('controller.roomAdmin', [ 'service.roomAdmin', 'ui.bootstrap']);
+var roomModule = angular.module('controller.roomAdmin', [ 'service.roomAdmin', 'service.messageBox', 'ui.bootstrap']);
 
-roomModule.controller('RoomCarouselCtrl', function($scope, $rootScope, $log, $timeout, $modal, RoomAdminService) {
+roomModule.controller('RoomCarouselCtrl', function($scope, $rootScope, $log, $timeout, $modal, $msgbox, RoomAdminService) {
     
     $scope.slideInterval = 5000;
     
@@ -53,7 +53,7 @@ roomModule.controller('RoomCarouselCtrl', function($scope, $rootScope, $log, $ti
     });
 });
 
-roomModule.controller('RoomCtrl', function($scope, $log, $modal, RoomAdminService) {
+roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAdminService) {
 	
     var room = $scope.room = {};
     
@@ -71,7 +71,7 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, RoomAdminServic
         promise.then(function(response) { 
 			var data = response.data;                   
 			if (response.statusText == 'OK') {
-			    $scope.showSuccessMessage();
+			    $msgbox.showSuccessMessage('Conference room ' + $scope.room.name + ' has been saved successfully.');
                 $scope.$broadcast('roomSaved', data);
 		    } else {
 		    	$scope.showErrorMessage('Oops, we received your request, but there was an error processing it.');
@@ -87,28 +87,6 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, RoomAdminServic
             $scope.$broadcast('roomSaveErr', data);
 		});
 	};
-    
-    $scope.showSuccessMessage = function() {
-       var modalInstance = $modal.open({
-          templateUrl: 'roomSaveSuccessMessage.html',
-          controller: 'RoomSaveSuccessMessageCtrl',
-          size: 'sm',
-          resolve: {
-            roomToSave: function () {
-                return $scope.room;
-            }
-          }
-        });
-
-        modalInstance.result.then(function (message) {
-              if (message=='ok') {
-                
-              }
-            }, 
-            function () {
-              $log.info('Modal dismissed at: ' + new Date());
-            });
-    };
     
     $scope.showErrorMessage = function( errorMessage ) {
        var modalInstance = $modal.open({
@@ -183,13 +161,6 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, RoomAdminServic
         $scope.roomForm.$setPristine();
     });
 	
-});
-
-roomModule.controller('RoomSaveSuccessMessageCtrl', function ($scope, $modalInstance, roomToSave) {
-    $scope.roomToSave = roomToSave;
-    $scope.ok = function () {
-        $modalInstance.close('ok');
-    };
 });
 
 roomModule.controller('RoomSaveErrorMessageCtrl', function ($scope, $modalInstance, roomToSave, errorMessage) {
