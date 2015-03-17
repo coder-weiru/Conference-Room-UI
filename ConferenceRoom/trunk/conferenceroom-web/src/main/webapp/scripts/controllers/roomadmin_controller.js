@@ -173,18 +173,18 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAd
         room.active = true;
         $scope.room = room;   
         $scope.roomForm.$setPristine();
-        $scope.unsetEditMode();
+        $scope.toggleEditMode();
     });
      
     $scope.$on('roomSaveErr', function(event, room) {  
         $scope.cancelAddRoom();
         $scope.roomForm.$setPristine();
-        $scope.unsetEditMode();
+        $scope.toggleEditMode();
     });
 	
     $scope.$on('roomDeleted', function(event, room) { 
         $scope.purgeRoom( room );
-        $scope.unsetEditMode();
+        $scope.toggleEditMode();
     });
     
 });
