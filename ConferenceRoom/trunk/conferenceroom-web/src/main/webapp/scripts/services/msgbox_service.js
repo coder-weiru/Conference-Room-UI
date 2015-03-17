@@ -9,8 +9,8 @@ angular.module('service.messageBox', ['ui.bootstrap']).service('$msgbox', ['$mod
             backdrop: true,
             keyboard: true,
             modalFade: true,
-            templateUrl: 'views/msgbox.html',
-            buttons: ['ok', 'cancel']
+            size: 'sm',
+            templateUrl: 'views/msgbox.html'
         };
 
         var modalOptions = {
@@ -41,7 +41,7 @@ angular.module('service.messageBox', ['ui.bootstrap']).service('$msgbox', ['$mod
                 tempModalDefaults.controller = function ($scope, $modalInstance) {
                     $scope.modalOptions = tempModalOptions;
                     $scope.modalOptions.ok = function (result) {
-                        $modalInstance.close(result);
+                        $modalInstance.close('ok');
                     };
                     $scope.modalOptions.close = function (result) {
                         $modalInstance.dismiss('cancel');
@@ -57,10 +57,32 @@ angular.module('service.messageBox', ['ui.bootstrap']).service('$msgbox', ['$mod
                 actionButtonText: '  OK  ',
                 headerText: 'Success',
                 bodyText: message,
-                buttons: ['ok']
+                closeButtonDisabled: true
             };
 
-            this.showModal({}, modalOptions);
+            return this.showModal({}, modalOptions);
+        };
+
+        this.showErrorMessage = function( message ) {
+           var modalOptions = {
+                actionButtonText: '  Got it  ',
+                headerText: 'Error',
+                bodyText: message,
+                closeButtonDisabled: true
+            };
+
+            return this.showModal({}, modalOptions);
+        };
+        
+        this.showConfirmationMessage = function( message ) {
+           var modalOptions = {
+                actionButtonText: 'Yes, I\'m sure',
+                closeButtonText: ' Cancel ',
+                headerText: 'Confirmation',
+                bodyText: message
+            };
+
+            return this.showModal({}, modalOptions);
         };
 
 }]);

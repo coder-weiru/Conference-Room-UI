@@ -74,45 +74,20 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAd
 			    $msgbox.showSuccessMessage('Conference room ' + $scope.room.name + ' has been saved successfully.');
                 $scope.$broadcast('roomSaved', data);
 		    } else {
-		    	$scope.showErrorMessage('Oops, we received your request, but there was an error processing it.');
+		    	$msgbox.showErrorMessage('Oops, we received your request for saving ' + $scope.room.name + ' , but there was an error processing it.');
                 $scope.$broadcast('roomSaveErr', data);
 		    }
 		}, function(response) { 
             var data = response.data;                   
 			if (data.httpStatus == 'BAD_REQUEST' || data.httpStatus == 'INTERNAL_SERVER_ERROR') {
-			    $scope.showErrorMessage(response.data.message);
+			    $msgbox.showErrorMessage(response.data.message);
 		    } else {
-		    	$scope.showErrorMessage('There was a network error. Try again later.');
+		    	$msgbox.showErrorMessage('There was a network error while saving  ' + $scope.room.name + '. Try again later.');
 		    }
             $scope.$broadcast('roomSaveErr', data);
 		});
 	};
-    
-    $scope.showErrorMessage = function( errorMessage ) {
-       var modalInstance = $modal.open({
-          templateUrl: 'roomSaveErrorMessage.html',
-          controller: 'RoomSaveErrorMessageCtrl',
-          size: 'sm',
-          resolve: {
-            roomToSave: function () {
-                return $scope.room;
-            },
-            errorMessage: function () {
-                return errorMessage;
-            }
-          }
-        });
-
-        modalInstance.result.then(function (message) {
-              if (message=='ok') {
-                
-              }
-            }, 
-            function () {
-              $log.info('Modal dismissed at: ' + new Date());
-            });
-    };
-    
+      
     $scope.addNewRoom = function() {
 		var room = {};
 		room.name = '';
@@ -161,12 +136,4 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAd
         $scope.roomForm.$setPristine();
     });
 	
-});
-
-roomModule.controller('RoomSaveErrorMessageCtrl', function ($scope, $modalInstance, roomToSave, errorMessage) {
-    $scope.roomToSave = roomToSave;
-    $scope.errorMessage = errorMessage;
-    $scope.ok = function () {
-        $modalInstance.close('ok');
-    };
 });

@@ -2,9 +2,9 @@
 /**
  * UserAdminController
  */
-var userModule = angular.module('controller.userAdmin', [ 'service.userAdmin', 'ui.grid', 'ui.grid.selection', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav', 'ui.bootstrap']);
+var userModule = angular.module('controller.userAdmin', [ 'service.userAdmin', 'service.messageBox', 'ui.grid', 'ui.grid.selection', 'ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav', 'ui.bootstrap']);
 
-userModule.controller('UserListCtrl', function($scope, $log, $timeout, $modal, UserAdminService) {
+userModule.controller('UserListCtrl', function($scope, $log, $timeout, $modal, $msgbox, UserAdminService) {
     
     $scope.getPhotoUrl = function( rowEntity ) {
         var photoUrl = rowEntity.photoUrl;
@@ -74,6 +74,7 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, $modal, U
     }; 
     
     $scope.saveUser = function( user ) { 
+        var promise;
         if (user!=null && user.id==null) {
 			promise = UserAdminService.addUser( user );
 		} else {
@@ -84,47 +85,22 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, $modal, U
         promise.then(function(response) { 
 			var data = response.data;                   
 			if (response.statusText == 'OK') {
-			    $scope.errorMessage = 'User information is saved successfully!';
-                $scope.$broadcast('userSaved', data);
+			    $scope.$broadcast('userSaved', data);
 		    } else {
 		    	$scope.showMessage('Oops, we received your request, but there was an error processing it.');
+                $msgbox.showErrorMessage('Oops, we received your request for saving ' + $scope.selectedUser.name + ' , but there was an error processing it.');
                 $scope.$broadcast('userSaveErr', user);
 		    }
 		}, function(response) { 
             var data = response.data;                   
 			if (data.httpStatus == 'BAD_REQUEST' || data.httpStatus == 'INTERNAL_SERVER_ERROR') {
-			    $scope.showMessage(response.data.message);
+			    $msgbox.showErrorMessage(response.data.message);
 		    } else {
-		    	$scope.showMessage('There was a network error. Try again later.');
+		    	$msgbox.showErrorMessage('There was a network error while saving  ' + $scope.selectedUser.name + '. Try again later.');
 		    }
             $scope.$broadcast('userSaveErr', user);
 		});
         
-    }; 
- 
-    $scope.showMessage = function( errorMessage ) {
-       var modalInstance = $modal.open({
-          templateUrl: 'userSaveErrorMessage.html',
-          controller: 'UserSaveErrorMessageCtrl',
-          size: 'sm',
-          resolve: {
-            userToSave: function () {
-                return $scope.selectedUser;
-            },
-            errorMessage: function () {
-                return errorMessage;
-            }
-          }
-        });
-
-        modalInstance.result.then(function (message) {
-              if (message=='ok') {
-                
-              }
-            }, 
-            function () {
-              $log.info('Modal dismissed at: ' + new Date());
-            });
     };
     
     $scope.getUser = function( user ) { 
@@ -189,7 +165,7 @@ userModule.controller('UserListCtrl', function($scope, $log, $timeout, $modal, U
 	
 });
 
-userModule.controller('MenuCtrl', function ($scope, $log, $modal) {
+userModule.controller('MenuCtrl', function ($scope, $log, $modal, $msgbox) {
     $scope.canAddNewUser = function() {
         return $scope.selectedUser==null;
     };
@@ -241,19 +217,9 @@ userModule.controller('MenuCtrl', function ($scope, $log, $modal) {
     };
     
     $scope.deleteUser = function() {
-		var modalInstance = $modal.open({
-          templateUrl: 'userDeleteConfirmation.html',
-          controller: 'UserDeleteConfirmationCtrl',
-          size: 'sm',
-          resolve: {
-            userToDelete: function () {
-                return $scope.selectedUser;
-            }
-          }
-        });
-
-        modalInstance.result.then(function (message) {
-              if (message=='ok') {
+        
+        $msgbox.showConfirmationMessage('Are you sure to delete user ' + $scope.selectedUser.name + '?').then(function (result) {
+              if (result=='ok') { 
                 $scope.removeUser( $scope.selectedUser );
               }
             }, 
@@ -292,26 +258,6 @@ userModule.controller('MenuCtrl', function ($scope, $log, $modal) {
 
 userModule.controller('UserPhotoUploadCtrl', function ($scope, $modalInstance, userSelected) {
     $scope.userSelected = userSelected;
-    $scope.ok = function () {
-        $modalInstance.close('ok');
-    };
-});
-
-userModule.controller('UserDeleteConfirmationCtrl', function ($scope, $modalInstance, userToDelete) {
-    $scope.userToDelete = userToDelete;
-    
-    $scope.ok = function () {
-        $modalInstance.close('ok');
-    };
-
-    $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
-    };
-});
-    
-userModule.controller('UserSaveErrorMessageCtrl', function ($scope, $modalInstance, userToSave, errorMessage) {
-    $scope.userToSave = userToSave;
-    $scope.errorMessage = errorMessage;
     $scope.ok = function () {
         $modalInstance.close('ok');
     };

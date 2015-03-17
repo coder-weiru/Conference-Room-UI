@@ -6,7 +6,7 @@
 </div>
 <div class="modal-footer">
   <button type="button" class="btn" 
-          data-ng-click="modalOptions.close()" ng-show="modalOptions.buttons.contains("'close'")">{{modalOptions.closeButtonText}}</button>
+          data-ng-click="modalOptions.close()" ng-show="!modalOptions.closeButtonDisabled">{{modalOptions.closeButtonText}}</button>
   <button class="btn btn-primary" 
-          data-ng-click="modalOptions.ok()" ng-show="modalOptions.buttons.contains("'ok'")">{{modalOptions.actionButtonText}}</button>
+          data-ng-click="modalOptions.ok()" ng-show="!modalOptions.okButtonDisabled">{{modalOptions.actionButtonText}}</button>
 </div>
