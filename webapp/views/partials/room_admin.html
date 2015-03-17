@@ -23,7 +23,7 @@
             <div ng-controller="RoomCtrl">
                 <ul class="nav nav-pills">
                         <li><button type="button" class="btn btn-info" ng-click="addNewRoom()" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()">Add Conference Room</button></li>
-                        <li><button type="button" class="btn btn-info" ng-show="canCancelSave()" ng-click="cancelAddRoom()" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()">   Cancel  </button></li>
+                        <li><button type="button" class="btn btn-info" ng-show="canCancelSave()" ng-click="purgeRoom(room)" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()">   Cancel  </button></li>
                 </ul>
                 <div class="panel panel-primary margin-top15">
                     
@@ -103,6 +103,7 @@
                                   </div>
                                   <div class="col-md-6">
                                     <button class="btn btn-info" ng-show="canSave()" ng-click="saveRoom()" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()">Update Room Information</button>
+                                    <button class="btn btn-default" ng-show="canDelete()" ng-click="deleteRoom()" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()">Delete Room {{room.name}}</button>  
                                   </div>
                                   <div class="col-md-3">
                                   </div>
@@ -117,31 +118,4 @@
         
     </div>
     
-</div>
-
-<div>
-    <script type="text/ng-template" id="roomSaveSuccessMessage.html">
-        <div class="modal-header">
-            <h3 class="modal-title">Success</h3>
-        </div>
-        <div class="modal-body">
-            <p>Conference room {{roomToSave.name}} has been saved successfully.</p>
-        <div class="modal-footer">
-            <button class="btn btn-primary" ng-click="ok()">  OK</button>
-        </div>
-    </script>
-</div>
-    
-<div>
-    <script type="text/ng-template" id="roomSaveErrorMessage.html">
-        <div class="modal-header">
-            <h3 class="modal-title">Error</h3>
-        </div>
-        <div class="modal-body">
-            <p>Error encountered while saving room {{roomToSave.name}}: </p>
-            <p> {{errorMessage}} </p>
-        <div class="modal-footer">
-            <button class="btn btn-primary" ng-click="ok()">Got it</button>
-        </div>
-    </script>
 </div>
