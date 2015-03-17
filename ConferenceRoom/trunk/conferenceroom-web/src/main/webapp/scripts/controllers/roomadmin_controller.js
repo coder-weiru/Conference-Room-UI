@@ -47,7 +47,7 @@ roomModule.controller('RoomCarouselCtrl', function($scope, $rootScope, $log, $ti
       }
     }, function (currentRoom, previousRoom) {
       if (currentRoom !== previousRoom) {
-          console.log('current room:', currentRoom);
+          //console.log('current room:', currentRoom);
           $rootScope.$broadcast('slideChange', $scope.rooms.indexOf(currentRoom));
       }
     });
@@ -87,13 +87,22 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAd
             $scope.$broadcast('roomSaveErr', data);
 		});
 	};
-      
+    
+    $scope.removeRoom = function( room ) {
+        if (room!=null && room.id!=null) {
+			RoomAdminService.deleteRoom(room.id).then(function( data ) {
+                $msgbox.showSuccessMessage('Conference room ' + $scope.room.name + ' has been removed.');
+                $scope.$broadcast('roomDeleted', data); 
+            });
+		} 
+    }; 
+    
     $scope.addNewRoom = function() {
 		var room = {};
 		room.name = '';
 		room.photoUrl = '';
 		room.location = '';
-        room.capacity = 0;
+        room.capacity = 10;
         room.projectorAvailable = false;
         room.tvAvailable = false;
         room.videoConferenceAvailable = false;
@@ -102,23 +111,49 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAd
 		$scope.addRoom(room);
 	};
     
-    $scope.cancelAddRoom = function() {
-        if ($scope.room && $scope.room.id==null) {
-            var index = $scope.rooms.indexOf($scope.room); 
-            $scope.rooms.splice(index,1);
+    $scope.deleteRoom = function() {
+        $scope.pauseSlide();
+        
+		$msgbox.showConfirmationMessage('Are you sure to delete room ' + $scope.room.name + '?').then(function (result) {
+              if (result=='ok') { 
+                $scope.removeRoom( $scope.room );
+              }
+            }, 
+            function () {
+              $log.info('Modal dismissed at: ' + new Date());
+            });
+	};
+    
+    $scope.purgeRoom = function( room ) {
+        var index = -1;                                     
+        for (var i = 0; i < $scope.rooms.length; i++) {
+            if (room.id) {
+                if ($scope.rooms[i].id==room.id) {
+                   index = i;
+                   break;
+                }
+            } else {
+                index = $scope.rooms.indexOf(room);
+                break;
+            }
         }
+        $scope.rooms.splice(index,1);
     }
     
     $scope.isNewRoom = function( room ) {
 		return room!=null && room.id==null;
 	};
     
-	$scope.canSave = function() {
+    $scope.canSave = function() {
 	    return $scope.roomForm.$valid && $scope.roomForm.$dirty;
 	};
 	
+    $scope.canDelete = function() {
+	    return $scope.room!=null && $scope.room.id!=null;
+	};
+    
     $scope.canCancelSave = function() { 
-	    return !$scope.room.id;
+	    return $scope.canSave() && $scope.room!=null && $scope.room.id==null;
 	};
     
 	$scope.$on('slideChange', function(event, index) { 
@@ -136,4 +171,8 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAd
         $scope.roomForm.$setPristine();
     });
 	
+    $scope.$on('roomDeleted', function(event, room) { 
+        $scope.purgeRoom( room );
+    });
+    
 });
