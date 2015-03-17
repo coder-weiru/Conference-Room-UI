@@ -22,9 +22,8 @@
         <div class="col-md-6">
             <div ng-controller="RoomCtrl">
                 <ul class="nav nav-pills">
-                        <li><button type="button" class="btn btn-info" ng-click="toggleEditMode()">{{editMode?'Cancel Editing':'Edit Room ' +  room.name}}</button></li>
-                        <li><button type="button" class="btn btn-info" ng-click="addNewRoom()">Add Conference Room</button></li>
-                        <li><button type="button" class="btn btn-info" ng-show="canCancelSave()" ng-click="purgeRoom(room)">   Cancel  </button></li>
+                        <li><button type="button" class="btn btn-info" ng-click="cancelEdit()">{{editMode?'Cancel Editing':'Edit Room ' +  room.name}}</button></li>
+                        <li><button type="button" class="btn btn-info" ng-show="!editMode" ng-click="addNewRoom()">Add Conference Room</button></li>
                 </ul>
                 <div class="panel panel-primary margin-top15">
                     

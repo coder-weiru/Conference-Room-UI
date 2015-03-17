@@ -120,8 +120,20 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAd
         }
 	};
     
+    $scope.cancelEdit = function() {
+		if ($scope.editMode) {
+            if ($scope.room!=null && $scope.room.id==null) {
+                $scope.purgeRoom(room);         
+            }            
+        }
+        $scope.toggleEditMode();
+	};
+    
     $scope.addNewRoom = function() {
-		var room = {};
+        
+        $scope.toggleEditMode();
+        
+        var room = {};
 		room.name = '';
 		room.photoUrl = '';
 		room.location = '';
@@ -171,10 +183,6 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAd
 	
     $scope.canDelete = function() {
 	    return $scope.editMode && $scope.room!=null && $scope.room.id!=null;
-	};
-    
-    $scope.canCancelSave = function() { 
-	    return $scope.canSave() && $scope.room!=null && $scope.room.id==null;
 	};
     
     $scope.startSpin = function(){
