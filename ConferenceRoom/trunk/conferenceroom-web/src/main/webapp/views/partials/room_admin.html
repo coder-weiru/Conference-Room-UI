@@ -22,8 +22,9 @@
         <div class="col-md-6">
             <div ng-controller="RoomCtrl">
                 <ul class="nav nav-pills">
-                        <li><button type="button" class="btn btn-info" ng-click="addNewRoom()" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()">Add Conference Room</button></li>
-                        <li><button type="button" class="btn btn-info" ng-show="canCancelSave()" ng-click="purgeRoom(room)" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()">   Cancel  </button></li>
+                        <li><button type="button" class="btn btn-info" ng-click="toggleEditMode()">{{editMode?'Cancel Editing':'Edit Room ' +  room.name}}</button></li>
+                        <li><button type="button" class="btn btn-info" ng-click="addNewRoom()">Add Conference Room</button></li>
+                        <li><button type="button" class="btn btn-info" ng-show="canCancelSave()" ng-click="purgeRoom(room)">   Cancel  </button></li>
                 </ul>
                 <div class="panel panel-primary margin-top15">
                     
@@ -32,39 +33,39 @@
                                 
                               <div class="form-group">
                                 <label class="control-label" for="roomName">Name</label>
-                                <input type="text" class="form-control" id="roomName" name="roomName" placeholder="Enter Conference Room Name" ng-model="room.name" ng-trim="true" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()" required>
+                                <input type="text" class="form-control" id="roomName" name="roomName" placeholder="Enter Conference Room Name" ng-model="room.name" ng-trim="true" ng-readonly="!editMode" required>
                                 <span class="label label-danger" ng-show="roomForm.roomName.$error.required">Required!</span>
                                 <p class="help-block">Enter a unique conference room name</p>
                               </div>
 
                               <div class="form-group">
                                 <label class="control-label" for="roomLocation">Location</label>
-                                <input type="text" class="form-control" id="roomLocation" name="roomLocation" placeholder="Enter Conference Room Location" ng-model="room.location" ng-trim="true" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()" required>
+                                <input type="text" class="form-control" id="roomLocation" name="roomLocation" placeholder="Enter Conference Room Location" ng-model="room.location" ng-trim="true" ng-readonly="!editMode" required>
                                 <span class="label label-danger" ng-show="roomForm.roomLocation.$error.required">Required!</span>
                                 <p class="help-block">Enter descriptive conference room location</p>
                               </div>
 
                               <div class="form-group">
                                 <label class="control-label" for="roomPhoto">Photo</label>
-                                <input type="file" id="roomPhoto" name="roomPhoto">
+                                <input type="file" id="roomPhoto" name="roomPhoto" ng-readonly="!editMode">
                                 <p class="help-block">Upload conference room photo here</p>
                               </div>
  
                               <div class="row"> 
                                   <div class="col-md-6">
                                       <div class="form-group">
-                                        <div class="checkbox" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()">
+                                        <div class="checkbox">
                                           <label>
-                                            <input type="checkbox" ng-model="room.projectorAvailable"> Does the conference room have projector? {{room.projectorAvailable?'Yes':'No'}}
+                                            <input type="checkbox" ng-model="room.projectorAvailable" ng-disabled="!editMode"> Does the conference room have projector? {{room.projectorAvailable?'Yes':'No'}}
                                           </label>
                                         </div>
                                       </div>
                                   </div>
                                   <div class="col-md-6">
                                       <div class="form-group">
-                                        <div class="checkbox" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()">
+                                        <div class="checkbox">
                                           <label>
-                                            <input type="checkbox" ng-model="room.tvAvailable"> Does the conference room have TV? {{room.tvAvailable?'Yes':'No'}}
+                                            <input type="checkbox" ng-model="room.tvAvailable" ng-disabled="!editMode"> Does the conference room have TV? {{room.tvAvailable?'Yes':'No'}}
                                           </label>
                                         </div>
                                       </div>
@@ -73,18 +74,18 @@
                               <div class="row"> 
                                   <div class="col-md-6">
                                       <div class="form-group">
-                                        <div class="checkbox" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()">
+                                        <div class="checkbox">
                                           <label>
-                                            <input type="checkbox" ng-model="room.videoConferenceAvailable"> Does it provide video conferencing capability? {{room.videoConferenceAvailable?'Yes':'No'}}
+                                            <input type="checkbox" ng-model="room.videoConferenceAvailable" ng-disabled="!editMode"> Does it provide video conferencing capability? {{room.videoConferenceAvailable?'Yes':'No'}}
                                           </label>
                                         </div>
                                       </div>
                                   </div>
                                   <div class="col-md-6">
                                       <div class="form-group">
-                                        <div class="checkbox" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()">
+                                        <div class="checkbox">
                                           <label>
-                                            <input type="checkbox" ng-model="room.audioConferenceAvailable"> Does it provide audio conferencing capability? {{room.audioConferenceAvailable?'Yes':'No'}}
+                                            <input type="checkbox" ng-model="room.audioConferenceAvailable" ng-disabled="!editMode"> Does it provide audio conferencing capability? {{room.audioConferenceAvailable?'Yes':'No'}}
                                           </label>
                                         </div>
                                       </div>
@@ -93,17 +94,17 @@
                                 
                               <div class="input-group">
                                   <label class="control-label" for="roomCapacity">Capacity</label>
-                                  <input type="number" class="form-control" id="roomCapacity" name="roomCapacity" ng-model="room.capacity" placeholder="10" min="2" max="99" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()" required>
+                                  <input type="number" class="form-control" id="roomCapacity" name="roomCapacity" ng-model="room.capacity" placeholder="10" min="2" max="99" ng-readonly="!editMode" required>
                                   <span class="label label-danger" ng-show="roomForm.roomCapacity.$error.required">Required!</span>
                                   <span class="label label-danger" ng-show="roomForm.roomCapacity.$error.number">Not valid number!</span>
                               </div>  
                                 
                               <div class="row margin-top15">  
                                   <div class="col-md-6">
-                                    <button class="btn btn-info" ng-show="canSave()" ng-click="saveRoom()" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()">Update Room Information</button>
+                                    <button class="btn btn-info" ng-show="canSave()" ng-click="saveRoom()">Update Room Information</button>
                                   </div>
                                   <div class="col-md-6">
-                                    <button class="btn btn-default" ng-show="canDelete()" ng-click="deleteRoom()" ng-mouseenter="pauseSlide()" ng-mouseleave="continueSlide()">Delete Room {{room.name}}</button>  
+                                    <button class="btn btn-default" ng-show="canDelete()" ng-click="deleteRoom()">Delete Room {{room.name}}</button>  
                                   </div>
                               </div>  
                                 

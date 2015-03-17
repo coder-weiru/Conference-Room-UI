@@ -51,11 +51,13 @@ roomModule.controller('RoomCarouselCtrl', function($scope, $rootScope, $log, $ti
           $rootScope.$broadcast('slideChange', $scope.rooms.indexOf(currentRoom));
       }
     });
+    
 });
 
 roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAdminService) {
 	
     var room = $scope.room = {};
+    $scope.editMode = false;
     
 	$scope.saveRoom = function () {
 		// If form is invalid, return and let AngularJS show validation errors.
@@ -97,6 +99,15 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAd
 		} 
     }; 
     
+    $scope.toggleEditMode = function() {
+		$scope.editMode = !$scope.editMode;
+        if ($scope.editMode) {
+            $scope.pauseSlide();
+        } else {
+            $scope.continueSlide();
+        }
+	};
+    
     $scope.addNewRoom = function() {
 		var room = {};
 		room.name = '';
@@ -112,9 +123,7 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAd
 	};
     
     $scope.deleteRoom = function() {
-        $scope.pauseSlide();
-        
-		$msgbox.showConfirmationMessage('Are you sure to delete room ' + $scope.room.name + '?').then(function (result) {
+        $msgbox.showConfirmationMessage('Are you sure to delete room ' + $scope.room.name + '?').then(function (result) {
               if (result=='ok') { 
                 $scope.removeRoom( $scope.room );
               }
@@ -145,11 +154,11 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAd
 	};
     
     $scope.canSave = function() {
-	    return $scope.roomForm.$valid && $scope.roomForm.$dirty;
+	    return $scope.editMode && $scope.roomForm.$valid && $scope.roomForm.$dirty;
 	};
 	
     $scope.canDelete = function() {
-	    return $scope.room!=null && $scope.room.id!=null;
+	    return $scope.editMode && $scope.room!=null && $scope.room.id!=null;
 	};
     
     $scope.canCancelSave = function() { 
@@ -164,15 +173,18 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAd
         room.active = true;
         $scope.room = room;   
         $scope.roomForm.$setPristine();
+        $scope.unsetEditMode();
     });
      
     $scope.$on('roomSaveErr', function(event, room) {  
         $scope.cancelAddRoom();
         $scope.roomForm.$setPristine();
+        $scope.unsetEditMode();
     });
 	
     $scope.$on('roomDeleted', function(event, room) { 
         $scope.purgeRoom( room );
+        $scope.unsetEditMode();
     });
     
 });
