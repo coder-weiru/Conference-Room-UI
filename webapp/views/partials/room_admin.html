@@ -99,6 +99,8 @@
                                   <span class="label label-danger" ng-show="roomForm.roomCapacity.$error.number">Not valid number!</span>
                               </div>  
                                 
+                              <span us-spinner="{radius:30, width:8, length: 16}" spinner-key="spinner-1"></span>
+                              
                               <div class="row margin-top15">  
                                   <div class="col-md-6">
                                     <button class="btn btn-info" ng-show="canSave()" ng-click="saveRoom()">Update Room Information</button>

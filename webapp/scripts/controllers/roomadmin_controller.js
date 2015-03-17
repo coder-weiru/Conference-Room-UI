@@ -2,7 +2,7 @@
 /**
  * RoomAdminController
  */
-var roomModule = angular.module('controller.roomAdmin', [ 'service.roomAdmin', 'service.messageBox', 'ui.bootstrap']);
+var roomModule = angular.module('controller.roomAdmin', [ 'service.roomAdmin', 'service.messageBox', 'angularSpinner', 'ui.bootstrap' ]);
 
 roomModule.controller('RoomCarouselCtrl', function($scope, $rootScope, $log, $timeout, $modal, $msgbox, RoomAdminService) {
     
@@ -54,12 +54,15 @@ roomModule.controller('RoomCarouselCtrl', function($scope, $rootScope, $log, $ti
     
 });
 
-roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAdminService) {
+roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAdminService, usSpinnerService) {
 	
     var room = $scope.room = {};
     $scope.editMode = false;
     
 	$scope.saveRoom = function () {
+        
+        $scope.startSpin();
+        
 		// If form is invalid, return and let AngularJS show validation errors.
 		if ($scope.roomForm.$invalid) {
 		    return;
@@ -71,6 +74,9 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAd
 			promise = RoomAdminService.updateRoom($scope.room);
 		}
         promise.then(function(response) { 
+            
+            $scope.stopSpin();
+            
 			var data = response.data;                   
 			if (response.statusText == 'OK') {
 			    $msgbox.showSuccessMessage('Conference room ' + $scope.room.name + ' has been saved successfully.');
@@ -91,8 +97,14 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAd
 	};
     
     $scope.removeRoom = function( room ) {
+        
+        $scope.startSpin();
+        
         if (room!=null && room.id!=null) {
 			RoomAdminService.deleteRoom(room.id).then(function( data ) {
+                
+                $scope.stopSpin();
+                
                 $msgbox.showSuccessMessage('Conference room ' + $scope.room.name + ' has been removed.');
                 $scope.$broadcast('roomDeleted', data); 
             });
@@ -164,6 +176,13 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAd
     $scope.canCancelSave = function() { 
 	    return $scope.canSave() && $scope.room!=null && $scope.room.id==null;
 	};
+    
+    $scope.startSpin = function(){
+        usSpinnerService.spin('spinner-1');
+    }
+    $scope.stopSpin = function(){
+        usSpinnerService.stop('spinner-1');
+    }
     
 	$scope.$on('slideChange', function(event, index) { 
         $scope.room = $scope.rooms[index];
