@@ -128,6 +128,18 @@ html, body, #right-panel {
 .margin-top100 { margin-top: 100px; }
 .margin-top150 { margin-top: 150px; }
 
+.box {
+    border-width: 1px;	
+    border-style: groove;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 2px 2px 2px #ccc;
+}
+p.title 
+{
+   text-align: center;
+}
+
 // Angular JS
 [ng-click],
 [data-ng-click],
