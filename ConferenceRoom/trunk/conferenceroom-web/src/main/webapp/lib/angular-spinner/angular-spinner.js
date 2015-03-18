@@ -9,7 +9,9 @@
 
 	function factory(angular, Spinner) {
 
-		return angular.module('angularSpinner', [])
+		return angular
+			.module('angularSpinner', [])
+
 			.provider('usSpinnerConfig', function () {
 				var _config = {};
 
@@ -24,7 +26,8 @@
 					}
 				};
 			})
-		   .factory('usSpinnerService', ['$rootScope', function ($rootScope) {
+
+			.factory('usSpinnerService', ['$rootScope', function ($rootScope) {
 				var config = {};
 
 				config.spin = function (key) {
@@ -37,6 +40,7 @@
 
 				return config;
 			}])
+
 			.directive('usSpinner', ['$window', 'usSpinnerConfig', function ($window, usSpinnerConfig) {
 				return {
 					scope: true,

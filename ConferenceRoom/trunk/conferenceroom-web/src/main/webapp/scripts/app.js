@@ -1,6 +1,6 @@
 'use strict';
 
-var appModule = angular.module('MainApp', ['controller.userAdmin', 'controller.roomAdmin', 'snap', 'ngRoute', 'flow']);
+var appModule = angular.module('MainApp', ['controller.userAdmin', 'controller.roomAdmin', 'controller.reservation', 'snap', 'ngRoute', 'flow']);
 
 appModule.run(function($rootScope, $http, $window, $q, $location) {
 
