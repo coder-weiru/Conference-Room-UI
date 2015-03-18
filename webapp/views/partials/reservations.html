@@ -3,10 +3,38 @@
         <h3>Book Conference Room</h3>    
     </div> 
     
-    <div ng-controller="CalendarCtrl">
+    <div class="container-fluid margin-top15">
+      
+        <div class="row">
+            <div class="col-md-6">
+            
+                <div ng-controller="CalendarCtrl">
+
+                    <div ui-calendar="calendarOptions" ng-model="eventSources"></div>
+
+                </div>
     
-        <div ui-calendar="calendarOptions" ng-model="eventSources"></div>
+            </div>
         
+            <div class="col-md-6">
+            
+                <div class="panel panel-primary">
+                    
+                    <div class="panel-body" id="roomList" ng-controller="RoomListCtrl">
+                        
+                        <div ng-repeat="roomRow in roomGrid" class="row">
+                            <div ng-repeat="room in roomRow" class="col-md-3">
+                                <div>
+                                  <img ng-src="{{url = (room.photoUrl? room.photoUrl : 'images/img_not_available_big.png')}}" alt="{{room.name}}" class="img-responsive" style="height: 100px;width: 100px;margin:auto;">
+                                  {{room.name}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            
+        </div>
     </div>
-    
 </div>
