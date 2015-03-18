@@ -8,7 +8,7 @@ angular.module('service.reservation', [])
 	URL : 'http://localhost:8080/conferenceroom-service'
 })
 
-.factory('reservationService', function($http, SERVICE_CONFIG) {
+.factory('ReservationService', function($http, SERVICE_CONFIG) {
 
 	var service = {};
 	
