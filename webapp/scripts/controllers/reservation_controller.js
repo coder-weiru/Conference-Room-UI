@@ -5,6 +5,54 @@
 var reservationModule = angular.module('controller.reservation', [ 'service.reservation', 'service.roomAdmin', 'service.messageBox', 'ui.calendar', 'ui.bootstrap' ]);
 
 reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, $timeout, $modal, $msgbox, RoomAdminService, ReservationService) {
+     
+    $scope.events = [
+      {title: 'All Day Event',start: new Date('Thu Oct 17 2013 09:00:00 GMT+0530 (IST)')},
+      {title: 'Long Event',start: new Date('Thu Oct 17 2013 10:00:00 GMT+0530 (IST)'),end: new Date('Thu Oct 17 2013 17:00:00 GMT+0530 (IST)')},
+      {id: 999,title: 'Repeating Event',start: new Date('Thu Oct 17 2013 09:00:00 GMT+0530 (IST)'),allDay: false}
+    ];
+     
+    $scope.onDayClick = function( date, allDay, jsEvent, view ){ 
+        $scope.$apply(function(){
+          $log.info('Day Clicked ' + date);
+        });
+    };
+     
+     
+    $scope.onEventDrop = function(event, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view){ 
+        $scope.$apply(function(){
+          $log.info('Event Droped to make dayDelta ' + dayDelta);
+        });
+    };
+     
+     
+    $scope.onEventResize = function(event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view ){  
+        $scope.$apply(function(){
+          $log.info('Event Resized to make dayDelta ' + minuteDelta);
+        });
+    };
+     
+    $scope.onEventClick = function(event){           
+        $scope.$apply(function(){
+          $log.info(event.title + ' is clicked');
+        });
+    };
+     
+    $scope.onRenderView = function(view){    
+        var date = new Date(view.calendar.getDate());
+        $scope.currentDate = date.toDateString();
+        $scope.$apply(function(){
+          $log.info('Page render with date '+ $scope.currentDate);
+        });
+    };
+     
+    $scope.changeView = function(view,calendar) {
+        currentView = view;
+        calendar.fullCalendar('changeView',view);
+        $scope.$apply(function(){
+          $log.info('You are looking at '+ currentView);
+        });
+    };
     
     $scope.calendarOptions = {
         height: 500,
@@ -21,42 +69,16 @@ reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, 
             right: 'today prev,next'
         },
         defaultView: 'agendaDay',
-        dayClick: $scope.onDayClick,
         selectable: true,
         selectHelper: true,
-        select: $scope.onSelect,
-        eventDrop: $scope.$apply,
-        eventResize: $scope.$apply
+        dayClick: $scope.onDayClick,
+        eventDrop: $scope.onEventDrop,
+        eventResize: $scope.onEventResize,
+        eventClick: $scope.onEventClick,
+        viewRender: $scope.onRenderView
     };
     
-    $scope.events = [
-        {   title: 'All Day Event',
-            start: moment().add(3, 'days').format('L') },
-        {   title: 'Fun with AngularJS',
-            start: moment().startOf('hour').format(),
-            end: moment().endOf('hour').add(1, 'hour').format(),
-            allDay: false 
-        }
-        ];
-
     $scope.eventSources = [$scope.events];
-    
-    $scope.onDayClick = function(date){
-    
-        $scope.$apply(function() {
-            $scope.events.push(
-                { title: "new event",
-                  start: date,
-                  end: moment(date).add('hours', 1).format(),
-                  allDay: false });
-                });
-    };
-
-    $scope.remove = function(index) {
-        $scope.events.splice(index,1);
-    };
-
-    
 });
 
 reservationModule.controller('RoomListCtrl', function($scope, $rootScope, $log, $timeout, $modal, $msgbox, RoomAdminService) {
