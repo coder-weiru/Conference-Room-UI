@@ -6,12 +6,27 @@ var reservationModule = angular.module('controller.reservation', [ 'service.rese
 
 reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, $timeout, $modal, $msgbox, RoomAdminService, ReservationService) {
      
-    $scope.events = [
-      {title: 'All Day Event',start: new Date('Thu Oct 17 2013 09:00:00 GMT+0530 (IST)')},
-      {title: 'Long Event',start: new Date('Thu Oct 17 2013 10:00:00 GMT+0530 (IST)'),end: new Date('Thu Oct 17 2013 17:00:00 GMT+0530 (IST)')},
-      {id: 999,title: 'Repeating Event',start: new Date('Thu Oct 17 2013 09:00:00 GMT+0530 (IST)'),allDay: false}
-    ];
+    $scope.events = [];
      
+    $scope.getEvents = function(start, end) { 
+        ReservationService.listReservations().then(function(reservations) { debugger;
+            var events = [];
+            reservations.forEach(function (element) {
+                  events.push(
+                    {
+                         title: element.title,
+                         description: element.description,
+                         start: new Date(element.startTime), 
+                         end: new Date(element.endTime), 
+                         creator: element.creator,
+                         room: element.room.name,
+                         editable: true
+                    });
+            });
+            $scope.events = events;
+		});
+    };
+    
     $scope.onDayClick = function( date, allDay, jsEvent, view ){ 
         $scope.$apply(function(){
           $log.info('Day Clicked ' + date);
@@ -42,7 +57,8 @@ reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, 
         var date = new Date(view.calendar.getDate());
         $scope.currentDate = date.toDateString();
         $scope.$apply(function(){
-          $log.info('Page render with date '+ $scope.currentDate);
+            $log.info('Page render with date '+ $scope.currentDate);
+            $scope.getEvents(date, date);
         });
     };
      
