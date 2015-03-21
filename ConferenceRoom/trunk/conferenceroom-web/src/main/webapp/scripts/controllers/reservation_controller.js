@@ -9,7 +9,7 @@ reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, 
     $scope.events = [];
      
     $scope.getEvents = function(start, end) { 
-        ReservationService.listReservations().then(function(reservations) { debugger;
+        ReservationService.listReservations(start, end).then(function(reservations) { 
             var events = [];
             reservations.forEach(function (element) {
                   events.push(
@@ -58,7 +58,10 @@ reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, 
         $scope.currentDate = date.toDateString();
         $scope.$apply(function(){
             $log.info('Page render with date '+ $scope.currentDate);
-            $scope.getEvents(date, date);
+            var start = moment(date).set({'hour': 0, 'minute': 0, 'second': 0, 'millisecond': 0});
+          
+            var end = moment(date).set({'hour': 23, 'minute': 59, 'second': 59, 'millisecond': 999});
+            $scope.getEvents(start, end);
         });
     };
      
