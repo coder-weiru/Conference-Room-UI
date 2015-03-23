@@ -6,19 +6,8 @@ var reservationModule = angular.module('controller.reservation', [ 'service.rese
 
 reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, $timeout, $modal, $msgbox, ReservationService) {
      
-    function dateFromISO8601(isostr) { debugger;
-        var localTimeS = isostr.slice(0, isostr.indexOf('Z'));    
-        var localTime = moment(isostr).subtract(moment().utcOffset(), 'm');
-        var datetime = localTime.toDate();     
-        var d = datetime.getDate();
-        var m = datetime.getMonth();
-        var y = datetime.getFullYear();
-        var h = datetime.getHours();
-        var min = datetime.getMinutes();  
-        var s = datetime.getSeconds();
-        var date = new Date($scope.currentDate);
-          date.setTime(Date.parse(localTimeS));                              
-        return date;                                
+    function dateFromISO8601(isostr) { 
+        return moment(isostr);                          
     }
     
     $scope.events = [];
@@ -28,7 +17,7 @@ reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, 
     $scope.getEvents = function(start, end) { 
         ReservationService.listReservations(start, end).then(function(reservations) { 
             var events = [];
-            reservations.forEach(function (element) { debugger;
+            reservations.forEach(function (element) { 
                   events.push(
                     {
                          title: element.title,
@@ -148,10 +137,21 @@ reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, 
         }
     );
     
+    $scope.$watchCollection(function(scope) { 
+            return scope.events;
+        },
+        function(newEventData, oldEventData) {
+                    
+            if (newEventData.length >0) { 
+                $scope.eventSources.push($scope.events);
+            }
+        }
+    );
+    
     $scope.eventSources = [$scope.events];
 });
 
-reservationModule.controller('RoomListCtrl', function($scope, $rootScope, $log, $timeout, $modal, RoomAdminService) {
+reservationModule.controller('RoomListCtrl', function($scope, $rootScope, $log, $timeout, $modal, usSpinnerService, RoomAdminService) {
     
     var roomGrid = $scope.roomGrid = [];
     var rooms = $scope.rooms = [];
@@ -282,9 +282,9 @@ reservationModule.controller('NewEventCtrl', function ($scope, $modalInstance, $
 		});
 	};
 	
-    $scope.saveReservation = function () { debugger;
+    $scope.saveReservation = function () { 
         
-        //$scope.startSpin();
+        $scope.startSpin();
         
 		// If form is invalid, return and let AngularJS show validation errors.
 		if ($scope.eventForm.$invalid) {
@@ -296,9 +296,9 @@ reservationModule.controller('NewEventCtrl', function ($scope, $modalInstance, $
 		} else {
 			promise = ReservationService.updateReservation($scope.room.id, $scope.reservation);
 		}
-        promise.then(function(response) {  debugger;
+        promise.then(function(response) {  
             
-            //$scope.stopSpin();
+            $scope.stopSpin();
             
 			var data = response.data;                   
 			if (response.statusText == 'OK') {
@@ -339,6 +339,14 @@ reservationModule.controller('NewEventCtrl', function ($scope, $modalInstance, $
         $scope.asyncSelected = $label;
         $scope.reservation.creator = $item.id;
     };
+    
+    $scope.startSpin = function(){
+        usSpinnerService.spin('spinner-2');
+    }
+    
+    $scope.stopSpin = function(){
+        usSpinnerService.stop('spinner-2');
+    }
     
     $scope.ok = function () {
         $modalInstance.close('ok');
