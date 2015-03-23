@@ -1,0 +1,77 @@
+<div>
+    <div class="modal-header">
+        <div class="row"> 
+            <div class="col-md-4">
+                <div class="box" ng-show="room.id">
+                    <p class="title">{{room.name}} ({{room.capacity}})</p>
+                    <img ng-src="{{url = (room.photoUrl? room.photoUrl : 'images/img_not_available_big.png')}}" alt="{{room.name}}" class="img-responsive" style="height: 100px;width: 100px;margin:auto;">
+                    <p class="title"><i class="fa fa-desktop" ng-show="room.tvAvailable" tooltip="TV available" tooltip-placement="top"></i>  <i class="fa fa-headphones" ng-show="room.audioConferenceAvailable" tooltip="Audio Conferencing available" tooltip-placement="top"></i>  <i class="fa fa-video-camera" ng-show="room.videoConferenceAvailable" tooltip="Video Conferencing available" tooltip-placement="top"></i>  <i class="fa fa-picture-o" ng-show="room.projectorAvailable" tooltip="Projector available" tooltip-placement="top"></i>
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <h3 class="modal-title">Book Room {{room.name}}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="modal-body">
+            <div class="panel panel-primary">
+                    
+                    <div class="panel-body">
+                        <form name="eventForm" novalidate role="form">
+                            
+                            <div class="form-group">
+                                <label class="control-label" for="evtStart">Meeting Time : </label>
+                                <p><strong>{{currentDate.format("dddd, MMMM Do YYYY")}} -  from   {{reservation.startTime.toLocaleTimeString()}}   to   {{reservation.endTime.toLocaleTimeString()}}</strong></p>  
+                                <p ng-click="toggleEditTime()">{{ editTime?'hide time  ':'change time  '}}<i class="fa fa-angle-double-right" ng-show="!editTime"></i><i class="fa fa-angle-double-down" ng-show="editTime"></i></p>
+                            </div>   
+                            
+                            <div class="row" ng-show="editTime"> 
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label" for="evtStart">From : </label>
+                                        <datetimepicker id="evtStart" name="evtStart" min-date="datetimePickerOptions.minDate" show-weeks="showWeeks" hour-step="datetimePickerOptions.hourStep" minute-step="datetimePickerOptions.minuteStep" ng-model="reservation.startTime" show-meridian="datetimePickerOptions.showMeridian" date-format="dd-MMM-yyyy" date-options="datetimePickerOptions.dateOptions" date-disabled="datetimePickerOptions.dateDisabled(eventStartDate, mode)" readonly-time="datetimePickerOptions.readonlyTime"></datetimepicker>
+                                        <span class="label label-danger" ng-show="eventForm.evtStart.$error.required">Required!</span>
+                                    </div>     
+                                </div>
+                                <div class="col-md-6">
+                                      <div class="form-group">
+                                        <label class="control-label" for="evtEnd">To : </label>
+                                        <datetimepicker id="evtEnd" name="evtEnd" min-date="datetimePickerOptions.minDate" show-weeks="showWeeks" hour-step="datetimePickerOptions.hourStep" minute-step="datetimePickerOptions.minuteStep" ng-model="reservation.endTime" show-meridian="datetimePickerOptions.showMeridian" date-format="dd-MMM-yyyy" date-options="datetimePickerOptions.dateOptions" date-disabled="datetimePickerOptions.dateDisabled(eventEndDate, mode)" readonly-time="datetimePickerOptions.readonlyTime"></datetimepicker>
+                                        <span class="label label-danger" ng-show="eventForm.evtEnd.$error.required">Required!</span>
+                                    </div>  
+                                 </div> 
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="control-label" for="evtTitle">Meeting Title : </label>
+                                <input type="text" class="form-control" id="evtTitle" name="evtTitle" placeholder="Untitled Event" ng-model="reservation.title" ng-trim="true" required>
+                                <span class="label label-danger" ng-show="eventForm.evtTitle.$error.required">Required!</span>
+                            </div>   
+                              
+                            <p ng-click="toggleEditDetails()">{{ editDetails?'hide details  ':'add details  '}}<i class="fa fa-angle-double-right" ng-show="!editDetails"></i><i class="fa fa-angle-double-down" ng-show="editDetails"></i></p>
+                              
+                            <div class="form-group" ng-show="editDetails">
+                                <label class="control-label" for="evtDescription">Details</label>
+                                <input type="text" class="form-control" id="evtDescription" name="evtDescription" placeholder="Enter details about this meeting" ng-model="reservation.description" ng-trim="true">
+                                <span class="label label-danger" ng-show="eventForm.evtDescription.$error.required">Required!</span>
+                            </div>
+      
+                            <div class="form-group">
+                                <label class="control-label" for="evtBookedBy">Room Booked By : </label>
+                                <input type="text" id="evtBookedBy" name="evtBookedBy" 
+ng-model="asyncSelected" placeholder="Find User" typeahead="name as user.name for user in filterUser($viewValue)" typeahead-editable="false" typeahead-on-select='onUserSelect($item, $model, $label)' class="form-control">
+                                <span class="label label-danger" ng-show="eventForm.evtBookedBy.$error.required">Required!</span>
+                            </div>                
+                                
+                            <span us-spinner="{radius:30, width:8, length: 16}" spinner-key="spinner-1"></span>
+                                
+                    </form>
+                </div>
+        </div> 
+    </div>    
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok()"> Book It </button>
+        <button class="btn btn-default" ng-click="close()">  Cancel  </button>
+    </div>    
+</div>

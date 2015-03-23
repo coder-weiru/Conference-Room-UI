@@ -23,7 +23,7 @@
                             <div ng-repeat="room in roomRow" class="col-md-3">
                                 <div class="box margin-top5" ng-show="room.id">
                                     <p class="title">{{room.name}} ({{room.capacity}})</p>
-                                    <img ng-src="{{url = (room.photoUrl? room.photoUrl : 'images/img_not_available_big.png')}}" alt="{{room.name}}" class="img-responsive" style="height: 100px;width: 100px;margin:auto;">
+                                    <img ng-src="{{url = (room.photoUrl? room.photoUrl : 'images/img_not_available_big.png')}}" alt="{{room.name}}" class="img-responsive" style="height: 100px;width: 100px;margin:auto;" ng-click="addEvent(room)">
                                     <p class="title"><i class="fa fa-desktop" ng-show="room.tvAvailable" tooltip="TV available" tooltip-placement="top"></i>  <i class="fa fa-headphones" ng-show="room.audioConferenceAvailable" tooltip="Audio Conferencing available" tooltip-placement="top"></i>  <i class="fa fa-video-camera" ng-show="room.videoConferenceAvailable" tooltip="Video Conferencing available" tooltip-placement="top"></i>  <i class="fa fa-picture-o" ng-show="room.projectorAvailable" tooltip="Projector available" tooltip-placement="top"></i>
                                     </p>
                                 </div>
@@ -37,4 +37,3 @@
         </div>
     </div>
 </div>
-
