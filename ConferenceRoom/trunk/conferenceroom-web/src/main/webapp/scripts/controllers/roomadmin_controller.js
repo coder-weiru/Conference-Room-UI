@@ -4,7 +4,7 @@
  */
 var roomModule = angular.module('controller.roomAdmin', [ 'service.roomAdmin', 'service.messageBox', 'angularSpinner', 'ui.bootstrap' ]);
 
-roomModule.controller('RoomCarouselCtrl', function($scope, $rootScope, $log, $timeout, $modal, $msgbox, RoomAdminService) {
+roomModule.controller('RoomCarouselCtrl', function($scope, $rootScope, $log, $modal, $msgbox, RoomAdminService) {
     
     $scope.slideInterval = 5000;
     
