@@ -11,19 +11,22 @@ reservationModule.factory("helpers", function() {
     };
     
     return {                                                                                                                                              dateFromISO8601: dateFromISO8601,
-       reservationToEvent: function(reservation) {
-            var events = [];
-            events.push(
-            {
-                title: reservation.title,
+       reservationToEvent: function(reservation) { 
+            return {
+                title: reservation.title + ' (' + reservation.room.name + ') ',
                 description: reservation.description,
                 start: dateFromISO8601(reservation.startTime), 
                 end: dateFromISO8601(reservation.endTime), 
                 creator: reservation.creator,
                 room: reservation.room,
-                editable: true
-            });
-            return events;
+                editable: false,
+                eventStartEditable: false,
+                durationEditable: false,
+                overlap: true,
+                //rendering: 'background',
+                color: reservation.room.calendar.color,
+                textColor: '#000'
+            };
        }
      };
 });
@@ -38,16 +41,7 @@ reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, 
         ReservationService.listReservations(start, end).then(function(reservations) { 
             var events = [];
             reservations.forEach(function (element) { 
-                  events.push(
-                    {
-                         title: element.title,
-                         description: element.description,
-                         start: helpers.dateFromISO8601(element.startTime), 
-                         end: helpers.dateFromISO8601(element.endTime), 
-                         creator: element.creator,
-                         room: element.room,
-                         editable: true
-                    });
+                  events.push(helpers.reservationToEvent(element));
             });
             
             $scope.events = events;
@@ -98,7 +92,11 @@ reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, 
         $scope.$apply(function(){
             $log.info('Time period selected from '+ start.format() + ' to ' + end.format());
         });
-    }
+    };
+    
+    $scope.onEventAfterRender = function( event, element, view ) { 
+        //element).css('width','50%');
+    };
     
     $scope.changeView = function(view,calendar) {
         currentView = view;
@@ -130,6 +128,7 @@ reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, 
         eventResize: $scope.onEventResize,
         eventClick: $scope.onEventClick,
         viewRender: $scope.onRenderView,
+        eventAfterRender: $scope.onEventAfterRender,
         select: $scope.onSelect
     };
     
@@ -169,8 +168,8 @@ reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, 
     );
     
     $scope.$on('reservationSave', function(event, reservation) {  
-           
-        var events = helpers.reservationToEvent(reservation);
+        var events = [];
+        events.push(helpers.reservationToEvent(reservation));
         $scope.eventSources.push(events);
             
     });
