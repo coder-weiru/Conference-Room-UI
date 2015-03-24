@@ -4,12 +4,32 @@
  */
 var reservationModule = angular.module('controller.reservation', [ 'service.reservation', 'service.roomAdmin', 'service.userAdmin', 'service.messageBox', 'angularSpinner', 'ui.calendar', 'ui.bootstrap', 'ui.bootstrap.datetimepicker' ]);
 
-reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, $timeout, $modal, $msgbox, ReservationService) {
-     
-    function dateFromISO8601(isostr) { 
-        return moment(isostr);                          
-    }
+/* Generic Services */                                                                      
+reservationModule.factory("helpers", function() {                                                                                                           
+    var dateFromISO8601 = function(isostr) {   
+            return moment(isostr);          
+    };
     
+    return {                                                                                                                                              dateFromISO8601: dateFromISO8601,
+       reservationToEvent: function(reservation) {
+            var events = [];
+            events.push(
+            {
+                title: reservation.title,
+                description: reservation.description,
+                start: dateFromISO8601(reservation.startTime), 
+                end: dateFromISO8601(reservation.endTime), 
+                creator: reservation.creator,
+                room: reservation.room,
+                editable: true
+            });
+            return events;
+       }
+     };
+});
+     
+reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, $timeout, $modal, $msgbox, ReservationService, helpers) {
+     
     $scope.events = [];
     $scope.eventStart = moment();
     $scope.eventEnd = moment();
@@ -22,8 +42,8 @@ reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, 
                     {
                          title: element.title,
                          description: element.description,
-                         start: dateFromISO8601(element.startTime), 
-                         end: dateFromISO8601(element.endTime), 
+                         start: helpers.dateFromISO8601(element.startTime), 
+                         end: helpers.dateFromISO8601(element.endTime), 
                          creator: element.creator,
                          room: element.room,
                          editable: true
@@ -148,6 +168,13 @@ reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, 
         }
     );
     
+    $scope.$on('reservationSave', function(event, reservation) {  
+           
+        var events = helpers.reservationToEvent(reservation);
+        $scope.eventSources.push(events);
+            
+    });
+    
     $scope.eventSources = [$scope.events];
 });
 
@@ -165,7 +192,7 @@ reservationModule.controller('RoomListCtrl', function($scope, $rootScope, $log, 
 		});
 	};
     
-    $scope.buildGrid = function( rooms ) {
+    $scope.buildGrid = function( rooms ) { 
         var row = 0;
         var col = 0;
         var roomRow;
@@ -239,9 +266,10 @@ reservationModule.controller('RoomListCtrl', function($scope, $rootScope, $log, 
         $scope.currentDate = currentDate;
             
     });
+    
 });
 
-reservationModule.controller('NewEventCtrl', function ($scope, $modalInstance, $msgbox, usSpinnerService, UserAdminService, ReservationService, room, currentDate, start, end) { 
+reservationModule.controller('NewEventCtrl', function ($rootScope, $scope, $modalInstance, $timeout, $msgbox, usSpinnerService, UserAdminService, ReservationService, helpers, room, currentDate, start, end) { 
     
     $scope.minDate = new Date();
     $scope.datetimePickerOptions = {
@@ -297,16 +325,14 @@ reservationModule.controller('NewEventCtrl', function ($scope, $modalInstance, $
 			promise = ReservationService.updateReservation($scope.room.id, $scope.reservation);
 		}
         promise.then(function(response) {  
-            
             $scope.stopSpin();
-            
-			var data = response.data;                   
+            var data = response.data;                   
 			if (response.statusText == 'OK') {
-			    $scope.$broadcast('reservationSaved', data);
-		    } else {
+                $rootScope.$broadcast('reservationSave', data);
+            } else {
 		    	$msgbox.showErrorMessage('Oops, we received your request for saving ' + $scope.reservation.title + ' , but there was an error processing it.');
-                $scope.$broadcast('reservationSaveErr', data);
-		    }
+                $rootScope.$broadcast('reservationSaveErr', data);
+		    }                                           
 		}, function(response) { 
             var data = response.data;                   
 			if (data.httpStatus == 'BAD_REQUEST' || data.httpStatus == 'INTERNAL_SERVER_ERROR') {
@@ -314,7 +340,9 @@ reservationModule.controller('NewEventCtrl', function ($scope, $modalInstance, $
 		    } else {
 		    	$msgbox.showErrorMessage('There was a network error while saving  ' + $scope.reservation.title + '. Try again later.');
 		    }
-            $scope.$broadcast('reservationSaveErr', data);
+            $rootScope.$broadcast('reservationSaveErr', data);
+            
+            $scope.stopSpin();
 		});
 	};
     
@@ -358,4 +386,5 @@ reservationModule.controller('NewEventCtrl', function ($scope, $modalInstance, $
     };  
     
     $scope.listUsers();
+
 });
