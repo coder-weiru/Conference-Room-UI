@@ -2,9 +2,9 @@
 /**
  * RoomAdminController
  */
-var roomModule = angular.module('controller.roomAdmin', [ 'service.roomAdmin', 'service.messageBox', 'angularSpinner', 'ui.bootstrap' ]);
+var roomModule = angular.module('controller.roomAdmin', [ 'service.roomAdmin', 'service.messageBox', 'service.spinner', 'ui.bootstrap' ]);
 
-roomModule.controller('RoomCarouselCtrl', function($scope, $rootScope, $log, $modal, $msgbox, RoomAdminService) {
+roomModule.controller('RoomCarouselCtrl', function($scope, $rootScope, $log, $modal, $msgbox, $spinner, RoomAdminService) {
     
     $scope.slideInterval = 5000;
     
@@ -18,9 +18,15 @@ roomModule.controller('RoomCarouselCtrl', function($scope, $rootScope, $log, $mo
     
     var rooms = $scope.rooms = [];
     
-    $scope.listRooms = function() { 
+    $scope.listRooms = function() { debugger;
+        
+        $spinner.startSpin('spinner-3');
+        
 		RoomAdminService.listRooms().then(function(rooms) {
             $scope.rooms = rooms;
+            
+            $spinner.stopSpin('spinner-3');
+            
 		});
 	};
     
@@ -54,14 +60,14 @@ roomModule.controller('RoomCarouselCtrl', function($scope, $rootScope, $log, $mo
     
 });
 
-roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAdminService, usSpinnerService) {
+roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAdminService, $spinner) {
 	
     var room = $scope.room = {};
     $scope.editMode = false;
     
 	$scope.saveRoom = function () {
         
-        $scope.startSpin();
+        $spinner.startSpin('spinner-1');
         
 		// If form is invalid, return and let AngularJS show validation errors.
 		if ($scope.roomForm.$invalid) {
@@ -75,7 +81,7 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAd
 		}
         promise.then(function(response) { 
             
-            $scope.stopSpin();
+            $spinner.stopSpin('spinner-1');
             
 			var data = response.data;                   
 			if (response.statusText == 'OK') {
@@ -98,12 +104,12 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAd
     
     $scope.removeRoom = function( room ) {
         
-        $scope.startSpin();
+        $spinner.startSpin('spinner-1');
         
         if (room!=null && room.id!=null) {
 			RoomAdminService.deleteRoom(room.id).then(function( data ) {
                 
-                $scope.stopSpin();
+                $spinner.stopSpin('spinner-1');
                 
                 $msgbox.showSuccessMessage('Conference room ' + $scope.room.name + ' has been removed.');
                 $scope.$broadcast('roomDeleted', data); 
@@ -184,13 +190,6 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAd
     $scope.canDelete = function() {
 	    return $scope.editMode && $scope.room!=null && $scope.room.id!=null;
 	};
-    
-    $scope.startSpin = function(){
-        usSpinnerService.spin('spinner-1');
-    }
-    $scope.stopSpin = function(){
-        usSpinnerService.stop('spinner-1');
-    }
     
 	$scope.$on('slideChange', function(event, index) { 
         $scope.room = $scope.rooms[index];
