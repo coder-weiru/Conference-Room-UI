@@ -59,7 +59,7 @@ reservationModule.factory("helpers", function( $log ) {
      };
 });
      
-reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, $timeout, $modal, $msgbox, $spinner, ReservationService) {
+reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, $timeout, $modal, $msgbox, $spinner, ReservationService, helpers) {
      
     $scope.events = [];
     $scope.eventStart = moment();
