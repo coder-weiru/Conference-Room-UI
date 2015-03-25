@@ -2,10 +2,10 @@
 /**
  * ReservationController
  */
-var reservationModule = angular.module('controller.reservation', [ 'service.reservation', 'service.roomAdmin', 'service.userAdmin', 'service.messageBox', 'angularSpinner', 'ui.calendar', 'ui.bootstrap', 'ui.bootstrap.datetimepicker' ]);
+var reservationModule = angular.module('controller.reservation', [ 'service.reservation', 'service.roomAdmin', 'service.userAdmin', 'service.messageBox', 'service.spinner', 'ui.calendar', 'ui.bootstrap', 'ui.bootstrap.datetimepicker' ]);
 
 /* Generic Services */                                                                      
-reservationModule.factory("helpers", function( $log, usSpinnerService ) {                                                                                                           
+reservationModule.factory("helpers", function( $log ) {                                                                                                           
     var dateFromISO8601 = function(isostr) {   
             return moment(isostr);          
     };
@@ -55,17 +55,11 @@ reservationModule.factory("helpers", function( $log, usSpinnerService ) {
                 }
             }
             return selected;
-       },
-       startSpin: function() {
-            usSpinnerService.spin('spinner-2');
-       },
-       stopSpin: function() {
-            usSpinnerService.stop('spinner-2');
        }
      };
 });
      
-reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, $timeout, $modal, $msgbox, ReservationService, helpers) {
+reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, $timeout, $modal, $msgbox, $spinner, ReservationService) {
      
     $scope.events = [];
     $scope.eventStart = moment();
@@ -85,7 +79,7 @@ reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, 
     }     
     
     $scope.getEvents = function(start, end) { 
-        helpers.startSpin();
+        $spinner.startSpin('spinner-2');
         ReservationService.listReservations(start, end).then(function(reservations) { 
             var events = [];
             reservations.forEach(function (element) { 
@@ -94,7 +88,8 @@ reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, 
             $scope.removeEventSource($scope.events);
             $scope.events = events;
             $scope.addEventSource($scope.events);
-            helpers.stopSpin();
+            
+            $spinner.stopSpin('spinner-2');
 		});
     };
     
@@ -347,7 +342,7 @@ reservationModule.controller('RoomListCtrl', function($scope, $rootScope, $log, 
     });
 });
 
-reservationModule.controller('NewEventCtrl', function ($rootScope, $scope, $modalInstance, $timeout, $msgbox, UserAdminService, ReservationService, helpers, room, currentDate, start, end) { 
+reservationModule.controller('NewEventCtrl', function ($rootScope, $scope, $modalInstance, $timeout, $msgbox, $spinner, UserAdminService, ReservationService, helpers, room, currentDate, start, end) { 
     
     $scope.minDate = new Date();
     $scope.datetimePickerOptions = {
@@ -390,7 +385,7 @@ reservationModule.controller('NewEventCtrl', function ($rootScope, $scope, $moda
 	
     $scope.saveReservation = function () { 
         
-        helpers.startSpin();
+        $spinner.startSpin('spinner-2');
         
 		// If form is invalid, return and let AngularJS show validation errors.
 		if ($scope.eventForm.$invalid) {
@@ -403,7 +398,8 @@ reservationModule.controller('NewEventCtrl', function ($rootScope, $scope, $moda
 			promise = ReservationService.updateReservation($scope.room.id, $scope.reservation);
 		}
         promise.then(function(response) {  
-            helpers.stopSpin();
+            $spinner.stopSpin('spinner-2');
+            
             var data = response.data;                   
 			if (response.statusText == 'OK') {
                 $rootScope.$broadcast('reservationSave', data);
@@ -420,7 +416,7 @@ reservationModule.controller('NewEventCtrl', function ($rootScope, $scope, $moda
 		    }
             $rootScope.$broadcast('reservationSaveErr', data);
             
-            $scope.stopSpin();
+            $spinner.stopSpin('spinner-2');
 		});
 	};
     
