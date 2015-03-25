@@ -18,7 +18,7 @@ roomModule.controller('RoomCarouselCtrl', function($scope, $rootScope, $log, $mo
     
     var rooms = $scope.rooms = [];
     
-    $scope.listRooms = function() { debugger;
+    $scope.listRooms = function() {
         
         $spinner.startSpin('spinner-3');
         
