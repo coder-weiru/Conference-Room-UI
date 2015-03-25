@@ -63,9 +63,7 @@
 ng-model="asyncSelected" placeholder="Find User" typeahead="name as user.name for user in filterUser($viewValue)" typeahead-editable="false" typeahead-on-select='onUserSelect($item, $model, $label)' class="form-control">
                                 <span class="label label-danger" ng-show="eventForm.evtBookedBy.$error.required">Required!</span>
                             </div>                
-                                
-                            <span us-spinner="{radius:30, width:8, length: 16}" spinner-key="spinner-2"></span>
-                                
+                                    
                     </form>
                 </div>
         </div> 
