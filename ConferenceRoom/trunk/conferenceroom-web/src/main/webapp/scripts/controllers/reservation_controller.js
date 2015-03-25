@@ -5,9 +5,28 @@
 var reservationModule = angular.module('controller.reservation', [ 'service.reservation', 'service.roomAdmin', 'service.userAdmin', 'service.messageBox', 'angularSpinner', 'ui.calendar', 'ui.bootstrap', 'ui.bootstrap.datetimepicker' ]);
 
 /* Generic Services */                                                                      
-reservationModule.factory("helpers", function() {                                                                                                           
+reservationModule.factory("helpers", function( $log ) {                                                                                                           
     var dateFromISO8601 = function(isostr) {   
             return moment(isostr);          
+    };
+    
+    var overlapEvent = function( event, begin, stop ) {   
+            //$log.debug('Event ' + event.title + ' start : ' + event.start.format() + ' end : ' + event.end.format() + ' selection begin : ' + begin.format() + ' selection stop : ' + stop.format());
+                        
+            var sameStart = begin.isSame(event.start, 'minute');
+            var evtInBetween = begin.isBetween(event.start, event.end, 'minute');
+            var selInBetween = event.start.isBetween(begin, stop, 'minute');
+                
+            if (sameStart) {
+                $log.debug('Event ' + event.title + ' has same start as selected ');
+            }
+            if (evtInBetween) {
+                $log.debug('Event ' + event.title + ' period overlaps the selected start time ');
+            }
+            if (selInBetween) {
+                $log.debug('Event ' + event.title + ' has the start time in between the selected period ');
+            }          
+            return (sameStart||evtInBetween||selInBetween);
     };
     
     return {                                                                                                                                              dateFromISO8601: dateFromISO8601,
@@ -27,7 +46,16 @@ reservationModule.factory("helpers", function() {
                 color: reservation.room.calendar.color,
                 textColor: '#000'
             };
-       }
+       },
+       eventsInTime: function( events, evtStart, evtEnd ) { 
+            var selected = [];
+            for (var i = 0; i < events.length; i++) {
+               if ( overlapEvent(events[i], evtStart, evtEnd) ) {
+                    selected.push(events[i]);
+                }
+            }
+            return selected;
+       }    
      };
 });
      
@@ -80,7 +108,6 @@ reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, 
             var date = new Date($scope.currentDate);
             $log.info('Page render with date '+ date.toDateString());
             var start = moment(date).set({'hour': 0, 'minute': 0, 'second': 0, 'millisecond': 0});
-          
             var end = moment(date).set({'hour': 23, 'minute': 59, 'second': 59, 'millisecond': 999});
             $scope.getEvents(start, end);
         });
@@ -90,7 +117,18 @@ reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, 
         $scope.eventStart = start;
         $scope.eventEnd = end;
         $scope.$apply(function(){
-            $log.info('Time period selected from '+ start.format() + ' to ' + end.format());
+            $log.info('Time period selected from '+ $scope.eventStart.format() + ' to ' + $scope.eventEnd.format());
+            var events = angular.copy($scope.events);
+            var evtStart = angular.copy($scope.eventStart).subtract(moment().utcOffset(), 'm');
+            var evtEnd = angular.copy($scope.eventEnd).subtract(moment().utcOffset(), 'm');
+            var selectedEvents = helpers.eventsInTime(events, evtStart, evtEnd);
+            $rootScope.$broadcast('eventSelectionChanged', selectedEvents);
+        });
+    };
+    
+    $scope.onUnSelect = function( view, jsEvent ) {
+        $scope.$apply(function(){
+            $rootScope.$broadcast('eventUnSelected', {});
         });
     };
     
@@ -123,13 +161,15 @@ reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, 
         defaultView: 'agendaDay',
         selectable: true,
         selectHelper: true,
+        unselectAuto: true,
         dayClick: $scope.onDayClick,
         eventDrop: $scope.onEventDrop,
         eventResize: $scope.onEventResize,
         eventClick: $scope.onEventClick,
         viewRender: $scope.onRenderView,
         eventAfterRender: $scope.onEventAfterRender,
-        select: $scope.onSelect
+        select: $scope.onSelect,
+        unselect: $scope.onUnSelect
     };
     
     $scope.$watch(function(scope) { 
@@ -184,9 +224,16 @@ reservationModule.controller('RoomListCtrl', function($scope, $rootScope, $log, 
     $scope.eventStartDate = new Date();
     $scope.eventEndDate = new Date();
     
+    $scope.disableAllRooms = function() {
+        for (var i = 0; i < $scope.rooms.length; i++) {
+            $scope.rooms[i].disabled = true;
+        }              
+    }
+    
     $scope.listRooms = function() { 
 		RoomAdminService.listRooms().then(function(rooms) { 
             $scope.rooms = rooms;
+            $scope.disableAllRooms();
             $scope.buildGrid( rooms );
 		});
 	};
@@ -266,6 +313,26 @@ reservationModule.controller('RoomListCtrl', function($scope, $rootScope, $log, 
             
     });
     
+    $scope.$on('eventSelectionChanged', function(event, selectedEvents) {   
+        for (var i = 0; i < $scope.rooms.length; i++) {
+            var roomId = $scope.rooms[i].id;
+            var selected = false;
+            for (var j = 0; j < selectedEvents.length; j++) {
+                if (roomId == selectedEvents[j].room.id) {
+                    $scope.rooms[i].disabled = true;
+                    selected = true;
+                    break;
+                }
+            }
+            if(!selected) {
+                $scope.rooms[i].disabled = false;
+            }
+        }           
+    });
+    
+    $scope.$on('eventUnSelected', function(event, selectedEvents) {   
+          $scope.disableAllRooms();      
+    });
 });
 
 reservationModule.controller('NewEventCtrl', function ($rootScope, $scope, $modalInstance, $timeout, $msgbox, usSpinnerService, UserAdminService, ReservationService, helpers, room, currentDate, start, end) { 
