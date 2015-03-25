@@ -128,6 +128,11 @@ html, body, #right-panel {
 .margin-top100 { margin-top: 100px; }
 .margin-top150 { margin-top: 150px; }
 
+img.disabled {
+    opacity: 0.2;
+    filter: alpha(opacity=20); /* For IE8 and earlier */
+    pointer-events: none;
+}
 .sq {   
     float: left;
     width: 15px;
