@@ -24,7 +24,7 @@ angular.module('service.roomAdmin', [])
 		});
 	}; 
 
-	service.addRoom = function(room) {
+	service.addRoom = function(room) { 
 		var roomAdminServiceUrl = SERVICE_CONFIG.URL + "/service/room/add";
 		var postConfig = {};
 		return $http.post(roomAdminServiceUrl, room, postConfig).then(function(response) {
