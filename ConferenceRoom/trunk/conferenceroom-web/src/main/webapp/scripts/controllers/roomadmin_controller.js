@@ -99,6 +99,8 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAd
 		    	$msgbox.showErrorMessage('There was a network error while saving  ' + $scope.room.name + '. Try again later.');
 		    }
             $scope.$broadcast('roomSaveErr', data);
+            
+            $spinner.stopSpin('spinner-1');
 		});
 	};
     
@@ -202,10 +204,8 @@ roomModule.controller('RoomCtrl', function($scope, $log, $modal, $msgbox, RoomAd
         $scope.toggleEditMode();
     });
      
-    $scope.$on('roomSaveErr', function(event, room) {  
-        $scope.cancelAddRoom();
-        $scope.roomForm.$setPristine();
-        $scope.toggleEditMode();
+    $scope.$on('roomSaveErr', function(event, result) {
+        // do nothing;
     });
 	
     $scope.$on('roomDeleted', function(event, room) { 
