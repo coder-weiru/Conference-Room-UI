@@ -5,7 +5,8 @@
 angular.module('service.roomAdmin', [])
 
 .constant('SERVICE_CONFIG', {
-	URL : 'http://localhost:8080/conferenceroom-service'
+	//URL : 'http://localhost:8080/conferenceroom-service'
+    URL: 'http://cr-service.elasticbeanstalk.com'
 })
 
 .factory('RoomAdminService', function($http, SERVICE_CONFIG) {

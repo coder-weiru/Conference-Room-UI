@@ -5,7 +5,8 @@
 angular.module('service.reservation', [])
 
 .constant('SERVICE_CONFIG', {
-	URL : 'http://localhost:8080/conferenceroom-service'
+	//URL : 'http://localhost:8080/conferenceroom-service'
+    URL: 'http://cr-service.elasticbeanstalk.com'
 })
 
 .factory('ReservationService', function($http, SERVICE_CONFIG) {
