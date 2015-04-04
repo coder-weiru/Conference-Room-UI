@@ -1,6 +1,9 @@
 {
-  "name": "Conference-Room",
+  "name": "Conference-Room-UI",
   "version": "1.0.0",
+  "description": "A tutorial application for AngularJS",
+  "repository": "https://github.com/coder-weiru/Conference-Room-UI",
+  "license": "GNU GENERAL PUBLIC LICENSE v3",
   "devDependencies": {
     "grunt": "~0.4.5",
     "grunt-bower-task": "^0.4.0",
@@ -11,6 +14,20 @@
     "grunt-karma": "~0.8.3",
     "karma-chrome-launcher": "~0.1.4",
     "karma-firefox-launcher": "~0.1.3",
-    "karma-jasmine": "^0.2.2"
+    "karma-jasmine": "^0.2.2",
+	"protractor": "~1.0.0",
+    "http-server": "^0.6.1",
+    "tmp": "0.0.23",
+    "shelljs": "^0.2.6"
+  },
+  "scripts": {
+	"bower-install": "bower install",
+    "start": "http-server -a 0.0.0.0 -p 8000",
+	"test": "node node_modules/karma/bin/karma start test/karma.conf.js",
+    "test-single-run": "node node_modules/karma/bin/karma start test/karma.conf.js  --single-run",
+    "update-webdriver": "webdriver-manager update",
+	"preprotractor": "npm run update-webdriver",
+    "protractor": "protractor test/protractor-conf.js",
+    "update-index-async": "node -e \"require('shelljs/global'); sed('-i', /\\/\\/@@NG_LOADER_START@@[\\s\\S]*\\/\\/@@NG_LOADER_END@@/, '//@@NG_LOADER_START@@\\n' + cat('bower_components/angular-loader/angular-loader.min.js') + '\\n//@@NG_LOADER_END@@', 'app/index-async.html');\""
   }
 }
