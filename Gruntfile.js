@@ -14,7 +14,8 @@ module.exports = function(grunt) {
 	// Configurable paths for the application
 	var appConfig = {
 		app: require('./bower.json').appPath || 'webapp',
-		dist: 'dist'
+		dist: 'dist',
+        maven: 'dist'
 	};
 	
     // Project configuration.
@@ -121,14 +122,45 @@ module.exports = function(grunt) {
 				dest: 'build/merged.min.js'
 			}
 		},	
-		
+		    
+        /*
+         * Build a WAR (web archive) without Maven or the JVM installed.
+         */
+        war: {
+            target: {
+              options: {
+                war_verbose: true,
+                war_dist_folder: 'dist',           /* Folder where to generate the WAR. */
+                war_name: 'CR-UI',                  /* The name fo the WAR file (.war will be the extension) */
+                webxml_welcome: 'index.html',
+                webxml_display_name: 'Conference Room UI',
+                webxml_mime_mapping: [ 
+                    { 
+                        extension: 'woff', 
+                        mime_type: 'application/font-woff' 
+                    } ]  
+            },
+            files: [
+                {
+                  expand: true,
+                  cwd: 'webapp',
+                  src: ['**'],
+                  dest: ''
+                }
+              ]
+            }
+        }
     });
 
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-karma');
 	grunt.loadNpmTasks('grunt-bower');	
+    grunt.loadNpmTasks('grunt-war');
+    
 	// Default task.
 	grunt.registerTask('default', ['karma','jshint','concat','uglify']);
+    
 };
