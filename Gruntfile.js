@@ -49,9 +49,12 @@ module.exports = function(grunt) {
 				eparator: ';'
 			},
 			dist: {
-				src: ['src/js/vendor/*.js','src/js/*.js'],
-				dest: 'dist/js/<%= pkg.name %>.js'
-			}
+                files: {
+                  './webapp/scripts/app.js': [
+                     './webapp/scripts/**/*.js'
+                   ]
+                }
+            }
 		},
 
 		// Empties folders to start fresh
@@ -162,5 +165,6 @@ module.exports = function(grunt) {
     
 	// Default task.
 	grunt.registerTask('default', ['karma','jshint','concat','uglify']);
-    
+    // Karma test task
+    grunt.registerTask('test', ['jshint','karma']);
 };
