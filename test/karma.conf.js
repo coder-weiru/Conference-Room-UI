@@ -46,7 +46,7 @@ module.exports = function(config) {
         'webapp/scripts/controllers/reservation_controller.js',
         'test/unit/jasmine_version_spec.js',
         //'test/unit/services/**/*.js',
-        'test/integration/services/**/*.js'
+        'test/unit/controllers/**/*.js'
     ],
 
     // list of files / patterns to exclude
@@ -76,7 +76,7 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
-    singleRun: true,
+    singleRun: false,
 
     colors: true,
 
@@ -85,10 +85,10 @@ module.exports = function(config) {
     logLevel: config.LOG_INFO,
 
     // Uncomment the following lines if you are using grunt's server to run the tests
-    // proxies: {
-    //   '/': 'http://localhost:9000/'
-    // },
+    proxies: {
+      '/': 'http://localhost:9000/'
+    },
     // URL root prevent conflicts with the site root
-    // urlRoot: '_karma_'
+    urlRoot: '_karma_'
   });
 };

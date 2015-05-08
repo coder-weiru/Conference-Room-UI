@@ -138,9 +138,7 @@ reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, 
         $scope.$apply(function(){
             $log.info('Time period selected from '+ $scope.eventStart.format() + ' to ' + $scope.eventEnd.format());
             var events = angular.copy($scope.events);
-            var evtStart = angular.copy($scope.eventStart).subtract(moment().utcOffset(), 'm');
-            var evtEnd = angular.copy($scope.eventEnd).subtract(moment().utcOffset(), 'm');
-            var selectedEvents = helpers.eventsInTime(events, evtStart, evtEnd);
+            var selectedEvents = helpers.eventsInTime(events, $scope.eventStart, $scope.eventEnd);
             $rootScope.$broadcast('eventSelectionChanged', selectedEvents);
         });
     };
@@ -181,6 +179,7 @@ reservationModule.controller('CalendarCtrl', function($scope, $rootScope, $log, 
         selectable: true,
         selectHelper: true,
         unselectAuto: false,
+        timezone: 'local',
         dayClick: $scope.onDayClick,
         eventDrop: $scope.onEventDrop,
         eventResize: $scope.onEventResize,
