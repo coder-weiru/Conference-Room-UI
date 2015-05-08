@@ -9,38 +9,45 @@ describe('service.userAdmin', function() {
 
     describe('UserAdminService', function() {
         var scope, httpBackend, userAdminService, result;
-
+        // listUsers();
+        var serviceUrl_listUsers;
+        
         beforeEach(inject(function(UserAdminService, SERVICE_CONFIG, $httpBackend) {
             httpBackend = $httpBackend;
             userAdminService = UserAdminService
+            serviceUrl_listUsers = SERVICE_CONFIG.URL + '/service/user/list';
 
-            var url = SERVICE_CONFIG.URL;
-
-            var mockedResponse = [{
-                "id": "12312312",
-                "title": "Transformers"
+            var mockUsers = [{
+                "name": "John Doe",
+                "email": "john.doe@coderconference2015.com",
+                "group": false
             }, {
-                "id": "445433",
-                "title": "Mackenna's Gold"
+                "name": "Jane Doe",
+                "email": "jane.doe@coderconference2015.com",
+                "group": false
             }, {
-                "id": "3335",
-                "title": "Star Wars"
+                "name": "CyberCon",
+                "email": "CyberCon@coderconference2015.com",
+                "group": true
             }]
 
-            //httpBackend.when("JSONP",url).respond(mockedResponse)
+            httpBackend.when("GET", serviceUrl_listUsers).respond(mockUsers);
         }));
 
-        it("Async listUsers()", function() {
-            setTimeout(function() {
-                var wsRequest = userAdminService.listUsers();
-
-                wsRequest.then(function(data) {
-                    debugger;				
-                    result = data.data.length;
-                    console.log(result);
-                });
-                }, 9000);
-        }, 10000);
+        it("should return mock users after invoking listUsers().", function() {
+            userAdminService.listUsers().then(function(data) {
+                result = data;
+            });
+            httpBackend.expect('GET', serviceUrl_listUsers);
+            
+            httpBackend.flush();
+            
+            expect(result.length).toEqual(3);
+            expect(result[0].name).toBe('John Doe');
+            expect(result[0].email).toBe('john.doe@coderconference2015.com');
+            expect(result[0].group).toBe(false);
+            
+        });
 
     });
 

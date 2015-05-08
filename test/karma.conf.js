@@ -45,7 +45,7 @@ module.exports = function(config) {
         'webapp/scripts/controllers/roomadmin_controller.js',
         'webapp/scripts/controllers/reservation_controller.js',
         'test/unit/jasmine_version_spec.js',
-        //'test/unit/services/**/*.js',
+        'test/unit/services/**/*.js',
         'test/unit/controllers/**/*.js'
     ],
 
